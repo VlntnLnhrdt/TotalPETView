@@ -1,0 +1,617 @@
+:root {
+    --white:    #f4f4f4;
+    --black:    #262626;
+    --darkgrey: #333333;
+    --grey: #767575;
+    --lightgrey: #ddd;
+    --lightergrey: #eee;
+    --darkerblue: #123255;
+    --darkblue: #295f99;
+    --blue:     #3070b3;
+    --lightblue-3: #a3cfff;
+    --lightblue-2: #b9daff;
+    --lightblue-1: #d5e9ff;
+    --orange:   #ff8430;
+
+    --evenbigger: 8rem;
+    --bigger: 1.8rem;
+    --big: 1.4rem;
+    --normal: 1rem;
+    --small: 0.8rem;
+    --smaller: 0.6rem; 
+
+    --resultTableGrid: 20% 20% 20% 20% 20%;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+    font-size: 100%;
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: var(--white);
+    color: var(--black);
+    padding: 0;
+    margin: 0;
+
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+p.success-message, p.error-message {
+    text-align: center;
+    font-size: var(--normal);
+    padding: 5px;
+    color: green;
+}
+
+p.error-message {
+    color: red;
+}
+
+.loading-status {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    height: 2em;
+    margin-left: -250px;
+    width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.loading-status p {
+    margin-left: 20px;
+}
+
+.loading-symbol {
+    border: 4px solid #f3f3f300;
+    border-top: 4px solid #3498db;
+    border-bottom: 4px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-status .success {
+    border: solid 4px #38e800;
+}
+
+.loading-status .error {
+    border: solid 4px #e82b00;
+}
+
+.fade-away {
+    animation: fadingAway 0.5s ease-in-out 5s forwards;
+}
+
+@keyframes fadingAway {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+#header {
+    height: 2em;
+    color: var(--darkblue);
+    padding: 0;
+}
+
+#header .info {
+    height: 100%;
+    float: left;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+#header .info img {
+    height: 100%;
+    margin: auto 1em;
+}
+
+#header .info .progname {
+    margin: auto 0.2em;
+    font-size: var(--bigger);
+}
+
+#header .info .version {
+    font-size: var(--small);
+    color: var(--darkgrey);
+}
+
+#header .navbar {
+    height: 100%;
+    float: right;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+#header .navbar a {
+    height: 1.6em;
+    margin: auto 10px;
+}
+
+#header .navbar a:hover img {
+    filter: drop-shadow(0px 0px 4px var(--darkerblue));
+}
+
+#header .navbar a img {
+    height: 100%;
+}
+
+#notFound {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#notFound .box {
+    text-align: center;
+    width: 40em;
+}
+
+#notFound .box .head {
+    font-size: var(--evenbigger);
+}
+
+#notFound .box .text {
+    font-size: var(--bigger);
+}
+
+#notFound .box .descr {
+    font-size: var(--big);
+}
+
+#login {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--big);
+}
+
+#login form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    text-align: center;
+    color: var(--lightergrey);
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: var(--blue);
+}
+
+#login form h1 {
+    padding-bottom: 20px;
+}
+
+#login form input, #login form button {
+    font-size: var(--big);
+    text-align: center;
+    border: none;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#login form input:focus {
+    outline: none;
+}
+
+#login form button:hover {
+    cursor: pointer;
+    background-color: var(--darkblue);
+    color: var(--lightblue-1);
+}
+
+#login .error {
+    color: rgb(250, 8, 8)
+}
+
+#upload {
+    padding: 50px;
+}
+
+#upload .drop-area {
+    background-color: var(--lightergrey);
+    width: 90%;
+    margin: auto;
+    padding: 100px;
+    border: dashed 3px var(--lightgrey);
+    border-radius: 5px;
+    text-align: center;
+}
+
+#upload .drop-area .dicom-text {
+    font-size: var(--bigger);
+    color: var(--darkgrey);
+    padding: 5px;
+}
+
+#upload .drop-area .dicom-input {
+    font-size: var(--big);
+    border: none;
+    border-radius: 3px;
+    background-color: var(--blue);
+    color: var(--white);
+    text-align: center;
+    margin: 10px auto;
+}
+
+#upload .loading-state {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#upload .loading-state p {
+    margin: auto 20px;
+}
+
+#upload .loaded-files {
+    margin: auto;
+    width: fit-content;
+    font-size: var(--big);
+}
+
+#upload .loaded-files .number-of-files {
+    text-align: center;
+    padding: 1em;
+}
+
+#upload .loaded-files ul {
+    list-style: none;
+    text-align: center;
+    width: 100%;
+}
+
+#upload .loaded-files ul li {
+    width: 100%;
+    padding: 1em;
+}
+
+#upload .loaded-files ul li:nth-child(2n+1) {
+    background-color: var(--lightergrey);
+}
+
+#search {
+    width: 100%;
+}
+
+#search .searchbar {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    color: var(--lightergrey);
+    border-bottom: solid 1px var(--lightergrey);
+    background: linear-gradient(to right, var(--darkerblue), var(--blue));
+}
+
+#search .searchbar img {
+    height: var(--big);
+    margin-left: 10px;
+    padding: 3px;
+}
+
+#search .searchbar input {
+    margin: 0;
+    width: 100%;
+    padding: 3px;
+    padding-left: 10px;
+    font-size: var(--big);
+    color: var(--lightergrey);
+    background: linear-gradient(to right, var(--darkerblue), var(--blue));
+    border-radius: none;
+    border: none;
+}
+
+#search .searchbar input:focus {
+    border: none;
+    outline: none;
+}
+
+#search .searchbar input::placeholder {
+    color: #b5b5b5;
+}
+
+#search .filterandcontent {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+}
+
+#search .filterandcontent .searchfilters {
+    text-align: center;
+    width: 15em;
+    background: linear-gradient(to bottom, var(--darkerblue), var(--blue));
+    color: var(--lightgrey);
+    font-size: var(--big);
+    border-right: solid var(--orange) 2px;
+}
+
+#search .filterandcontent .searchresults {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-rows: auto 20em;
+}
+
+#search .filterandcontent .searchresults .loading-status {
+    display: flex;
+    padding: 1em;
+}
+
+#search .filterandcontent .searchresults .resultlist {
+    width: 100%;
+    color: var(--darkblue);
+    font-size: var(--big);
+}
+
+#search .filterandcontent .searchresults .resultlist .headrow {
+    display: grid;
+    grid-template-columns: var(--resultTableGrid);
+    text-align: center;
+    border-bottom: solid 3px var(--darkblue);
+}
+
+#search .filterandcontent .searchresults .resultlist .noResultsText {
+    color: var(--darkerblue);
+    text-align: center;
+    padding: 20px;
+}
+
+#search .filterandcontent .searchresults .resultlist .listhead {
+    font-style: bolder;
+}
+
+#search .filterandcontent .searchresults .resultlist .patient {
+    width: 100%;
+}
+
+
+#search .filterandcontent .searchresults .resultlist .patient:nth-child(2n) {
+    background-color: var(--lightblue-1);
+}
+
+
+#search .filterandcontent .searchresults .resultlist .patient .patientInfo {
+    display: grid;
+    grid-template-columns: var(--resultTableGrid);
+    text-align: center;
+}
+
+#search .filterandcontent .searchresults .resultlist .patient .patientInfo:hover {
+    color: var(--orange);
+    cursor: pointer;
+}
+
+#search .filterandcontent .searchresults .resultlist .patient.active .patientInfo{
+    color: var(--orange);
+}
+
+#search .filterandcontent .searchresults .resultlist .patient .studies {
+    width: 100%;
+    margin-left: 20px;
+    text-align: center;
+    border-top: dashed 1px var(--darkgrey);
+    border-left: dashed 1px var(--darkgrey);
+}
+
+#search .filterandcontent .searchresults .resultlist .patient .studies .study{
+    width: 100%;
+}
+
+#search .filterandcontent .searchresults .resultlist .patient .studies .study:nth-child(2n) {
+    background-color: var(--lightergrey);
+}
+
+#search .filterandcontent .searchresults .resultlist .patient .studies .study .studyInfo,
+#search .filterandcontent .searchresults .resultlist .patient .studies .studyHead {
+    width: 100%;
+    display: grid;
+    grid-template-columns: var(--resultTableGrid);
+}
+
+#search .filterandcontent .searchresults .resultlist .patient .studies .study .studyInfo:hover {
+    cursor: pointer;
+    color: var(--orange);
+}
+
+#search .filterandcontent .searchresults .resultlist .patient .studies .study.active .studyInfo {
+    color: var(--orange);
+}
+
+#search .filterandcontent .searchresults .seriesResults {
+    border-top: solid 2px var(--darkerblue);
+    padding: 10px;
+    color: var(--darkerblue);
+}
+
+#search .filterandcontent .searchresults .seriesResults .seriesHead {
+    font-size: var(--big);
+}
+
+#search .filterandcontent .searchresults .seriesResults .series {
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+}
+
+#search .filterandcontent .searchresults .seriesResults .series .serie {
+    padding: 5px;
+}
+
+#search .filterandcontent .searchresults .seriesResults .series .serie .preview {
+    height: 8em;
+}
+
+#search .filterandcontent .searchresults .seriesResults .series .serie .preview img {
+    height: 100%;
+    border-radius: 20px;
+}
+
+#search .filterandcontent .searchresults .seriesResults .series .serie .description {
+    font-size: var(--small);
+    text-align: center;
+}
+
+
+#viewer {
+    width: 100%;
+}
+
+#viewer .toolbar {
+    width: 100%;
+    height: 1.7em;
+    background: linear-gradient(to right, var(--darkerblue), var(--blue));
+    color: var(--lightergrey);
+    padding: 3px;
+    border-bottom: solid 1px var(--lightergrey);
+    border-top: solid 2px var(--lightergrey);
+}
+
+#viewer .workspace {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    width: 100vw;
+    height: calc(100vh - 3.7em);
+}
+
+#viewer .workspace .studylist {
+    width: 15em;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--darkerblue), var(--blue));
+    color: var(--lightgrey);
+    font-size: var(--big);
+    border-right: solid var(--orange) 2px;
+    overflow: auto;
+    scrollbar-width: none;
+}
+
+#viewer .workspace .studylist .patientInfo {
+    text-align: center;
+    border-bottom: solid 2px var(--lightergrey);
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+    background-color: var(--darkerblue);
+}
+
+#viewer .workspace .studylist .patientInfo p {
+    padding: 5px;
+}
+
+#viewer .workspace .studylist .study {
+    border-bottom: solid 2px var(--lightergrey);
+}
+
+#viewer .workspace .studylist .study .studyInfo:hover {
+    cursor: pointer;
+    color: var(--orange);
+}
+
+#viewer .workspace .studylist .study .studyInfo {
+    padding: 5px;
+}
+
+#viewer .workspace .studylist .study .studyInfo p {
+    padding: 5px;
+}
+
+#viewer .workspace .studylist .study .series {
+    margin-left: 20px;
+    overflow: hidden;
+}
+
+#viewer .workspace .studylist .notOpen .series { /* Show / Hide Studies */
+    display: none;
+}
+
+#viewer .workspace .studylist .study .series .serie {
+    border-left: var(--orange) dashed 2px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: background-color 0.1s;
+}
+
+#viewer .workspace .studylist .study .series .serie:hover {
+    cursor: pointer;
+    background-color: var(--blue);
+}
+
+#viewer .workspace .studylist .study .series .serie .preview {
+    max-width: 60px;
+    padding: 5px;
+}
+
+#viewer .workspace .studylist .study .series .serie .preview img {
+    width: 100%;
+}
+
+#viewer .workspace .studylist .study .series .serie .description {
+    padding: 5px;
+}
+
+#viewer .workspace .studylist .study .series .serie .description .prod {
+    font-size: var(--small);
+    font-style: italic;
+}
+
+
+#viewer .workspace .viewport {
+    display: grid;
+    width: 100%;
+
+    grid-template-columns: auto;
+    gap: 5px;
+}
+
+#viewer .workspace .viewport .viewbox {
+    background-color: var(--lightblue-3);
+    border: dashed 2px var(--lightergrey);
+    display: flex;
+    align-items: center;
+    font-size: 10em;
+}
+
+#viewer .workspace .viewport .viewbox p {
+    width: 100%;
+    text-align: center;
+}
+
+#viewer .workspace .viewport .viewbox:hover {
+    background-color: var(--lightblue-2);
+    border: solid 2px var(--lightgrey);
+    cursor: pointer;
+}
