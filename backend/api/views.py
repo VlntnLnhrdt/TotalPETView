@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt  # Nur nötig, falls kein CSRF-Schutz – hier NICHT genutzt
 from django.contrib.auth.decorators import login_required
@@ -77,7 +77,6 @@ def patient_studies(request, orthancId):
 @require_POST
 @login_required
 def study_series(request, orthancId):
-    print(orthancId)
     try:
         orthanc_response = requests.get(
             f"{ORTHANC_URL}/studies/{orthancId}/series",
@@ -90,10 +89,43 @@ def study_series(request, orthancId):
 
         series = orthanc_response.json()
 
-
         return JsonResponse(series, safe=False)
     
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Ungültiges JSON'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+@require_POST
+@login_required
+def instance_preview(request, orthancId):
+    print(orthancId)
+    try:
+        orthanc_response = requests.get(
+            f"{ORTHANC_URL}/instances/{orthancId}/preview",
+            auth=ORTHANC_AUTH,
+        )
+
+        if orthanc_response.status_code != 200:
+            return JsonResponse({'error': 'Fehler bei der Verbindung zu Orthanc'}, status=orthanc_response.status_code)
+
+
+        return HttpResponse(orthanc_response.content, content_type="image/png")
+    
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

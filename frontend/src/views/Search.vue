@@ -28,7 +28,7 @@
                         <p>Name</p>
                         <p>Geburtsdatum</p>
                         <p>Geschlecht</p>
-                        <p>Letzte Studie</p>
+                        <p>Letzte Änderung</p>
                     </div>
 
                     <div v-if="patients.length == 0">
@@ -46,7 +46,7 @@
                             <p>{{ patient.MainDicomTags.PatientName }}</p>
                             <p>{{ formatDate(patient.MainDicomTags.PatientBirthDate) }}</p>
                             <p>{{ patient.MainDicomTags.PatientSex }}</p>
-                            <p>{{ formatDate(getLatestStudy(patient)) }}</p>
+                            <p>{{ formatDate(patient.LastUpdate) }}</p>
                         </div>
 
                         <div v-if="activePatient === patient.ID"
@@ -75,15 +75,15 @@
                     <p class="seriesHead">Studie: {{ activeStudy ? activeStudy.MainDicomTags.StudyDescription || 'Keine Beschreibung' : 'Keine Studie ausgewählt'}}</p>
 
                     <div v-if="activeStudy" class="series">
-                        <div v-for="serie in activeStudy.Series" :key="serie.OrthancID" class="serie" >
+                        <div v-for="serie in series" :key="serie.ID" class="serie" >
                             <div class="preview">
-                                <img v-if="serie.Instances?.[0]?.OrthancID && previewUrls[serie.Instances[0].OrthancID]"
-                                :src="previewUrls[serie.Instances[0].OrthancID]"
+                                <img v-if="previews[serie.Instances[0]]"
+                                :src="previews[serie.Instances[0]]"
                                 alt="Serie-Preview">
                             </div>
 
                             <div class="description">
-                                <p>{{ serie.SeriesNumber || '_' }} -{{  serie.Modality || 'Unbekannt' }}</p>
+                                <p>{{ serie.MainDicomTags.SeriesDescription || '_' }}</p>
                             </div>
                         </div>
                     </div>
@@ -101,7 +101,8 @@
     import {
         searchPatients,
         getPatientStudies,
-        getStudySeries
+        getStudySeries,
+        getPreview
     } from '../store/api';
 
 
@@ -123,6 +124,7 @@
                 series: [],
                 activePatient: '',
                 activeStudy: '',
+                previews: {},
             }
         },
         methods: {
@@ -161,6 +163,7 @@
             },
             async selectStudy(study) {
                 this.setLoadingStatus(true, "Lade Series")
+
                 try {
                     const response = await getStudySeries(study.ID)
                     this.series = response
@@ -172,15 +175,34 @@
                 }
 
                 this.activeStudy = study
+                this.previews = {}
+
+                this.loadPreviewUrls()
+                
+            },
+
+            async loadPreviewUrls() {
+                this.setLoadingStatus(true, "Lade Previews")
+
+                for (const serie of this.series) {
+                    const instanceId = serie.Instances[0]
+                    if (instanceId) {
+                        try {
+                            const blobUrl = await getPreview(instanceId)
+                            this.previews[instanceId] = blobUrl
+                        } catch (e) {
+                            console.error('Laden der Previews fehlgeschlagen:', e);
+                        }
+                    }
+                }
+
+                this.setLoadingStatus(false, "Ende")
             },
 
             // The following are helper-functions
             formatDate(dateString) {
                 if (!dateString) return ""
                 return `${dateString.slice(6, 8)}.${dateString.slice(4, 6)}.${dateString.slice(0, 4)}`
-            },
-            getLatestStudy() { // FIXME tatsächlich umsetzen
-                return "20000725"
             },
             setLoadingStatus(status, text, result=true) {
                 this.isLoading = status
