@@ -2,9 +2,32 @@ import { getCSRFToken } from "./auth"
 
 const apiURL = "http://localhost:8000/api"
 
+export async function getPatientData(patientOrthancId) {
+    try {
+        const response = await fetch(apiURL + '/patient/' + patientOrthancId, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCSRFToken(),
+        },
+        credentials: 'include'
+      })
+  
+      if (!response.ok) {
+        throw new Error(`Fehler beim Abrufen des Patienten: ${response.status}`)
+      }
+  
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Fehler bei der Patientabfrage:', error)
+      throw error
+    }
+}
+
 export async function searchPatients(query) {
     try {
-      const response = await fetch(apiURL + '/patient/search', {
+        const response = await fetch(apiURL + '/patient/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,7 +51,7 @@ export async function searchPatients(query) {
 
 export async function getPatientStudies(patientOrthancId) {
     try {
-      const response = await fetch(apiURL + '/patient/' + patientOrthancId + '/studies', {
+        const response = await fetch(apiURL + '/patient/' + patientOrthancId + '/studies', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,6 +85,29 @@ export async function getStudySeries(studyOrthancId) {
   
       if (!response.ok) {
         throw new Error(`Fehler beim Abrufen der Study: ${response.status}`)
+      }
+  
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Fehler bei der Seriensuche:', error)
+      throw error
+    }
+}
+
+export async function getPatientSeries(patientOrthancId) {
+    try {
+        const response = await fetch(apiURL + '/patient/' + patientOrthancId + '/series', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCSRFToken(),
+        },
+        credentials: 'include'
+      })
+  
+      if (!response.ok) {
+        throw new Error(`Fehler beim Abrufen der Series: ${response.status}`)
       }
   
       const data = await response.json()

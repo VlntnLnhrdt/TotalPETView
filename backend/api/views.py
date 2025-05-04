@@ -10,7 +10,32 @@ ORTHANC_AUTH = ('alice', 'alicePassword')  # Falls Basic Auth benötigt wird # F
 
 @require_POST
 @login_required
+def get_patient_data(request, orthancId):
+    print("wtf")
+    try:
+        orthanc_response = requests.get(
+            f"{ORTHANC_URL}/patients/{orthancId}",
+            auth=ORTHANC_AUTH,
+            headers={'Content-Type': 'application/json'},
+        )
+
+        if orthanc_response.status_code != 200:
+            return JsonResponse({'error': 'Fehler bei der Verbindung zu Orthanc'}, status=orthanc_response.status_code)
+
+        patient = orthanc_response.json()
+
+        return JsonResponse(patient, safe=False)
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Ungültiges JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@require_POST
+@login_required
 def search_patients(request):
+    print("hallo")
     try:
         body = json.loads(request.body)
         query = body.get('query', '').strip()
@@ -80,6 +105,28 @@ def study_series(request, orthancId):
     try:
         orthanc_response = requests.get(
             f"{ORTHANC_URL}/studies/{orthancId}/series",
+            auth=ORTHANC_AUTH,
+            headers={'Content-Type': 'application/json'},
+        )
+
+        if orthanc_response.status_code != 200:
+            return JsonResponse({'error': 'Fehler bei der Verbindung zu Orthanc'}, status=orthanc_response.status_code)
+
+        series = orthanc_response.json()
+
+        return JsonResponse(series, safe=False)
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Ungültiges JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+@require_POST
+@login_required
+def patient_series(request, orthancId):
+    try:
+        orthanc_response = requests.get(
+            f"{ORTHANC_URL}/patients/{orthancId}/series",
             auth=ORTHANC_AUTH,
             headers={'Content-Type': 'application/json'},
         )

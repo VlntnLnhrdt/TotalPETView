@@ -4,6 +4,7 @@ import NotFound from './views/NotFound.vue'
 import Login from './views/Login.vue'
 import Register from './views/Register.vue'
 import Search from './views/Search.vue'
+import Viewer from './views/Viewer.vue'
 
 const routes = [
     {
@@ -35,6 +36,14 @@ const routes = [
         component: Register,
         meta: {
             needsAuth: false,
+        },
+    },
+    {
+        path: '/viewer',
+        name: 'viewer',
+        component: Viewer,
+        meta: {
+            needsAuth: true,
         },
     },
     {

@@ -38,7 +38,7 @@
                     <div v-for="patient in patients" :key="patient.ID"
                         class="patient" 
                         @click="selectPatient(patient.ID)"
-                        @dblclick="loadView(patient.ID)"
+                        @dblclick="loadViewer(patient.ID)"
                         :class="{ 'active': activePatient === patient }">
 
                         <div class="patientInfo">
@@ -99,6 +99,9 @@
         useAuthStore
     } from '../store/auth'
     import {
+        useRouter
+    } from 'vue-router'
+    import {
         searchPatients,
         getPatientStudies,
         getStudySeries,
@@ -109,8 +112,11 @@
     export default {
         setup() {
             const authStore = useAuthStore()
+            const router = useRouter()
+
             return {
-                authStore
+                authStore,
+                router
             }
         },
         data () {
@@ -130,12 +136,13 @@
         methods: {
             // The following are request-functions
             async searchPatients() {
+
+                this.series = []
+
                 if (this.query.length < 2) {
                     this.patients = []
                     return
                 }
-
-                this.setLoadingStatus(true, "Suche Patienten")
 
                 try {
                     const response = await searchPatients(this.query)
@@ -197,6 +204,12 @@
                 }
 
                 this.setLoadingStatus(false, "Ende")
+            },
+            loadViewer(orthancId) {
+                this.router.push({
+                    path: '/viewer',
+                    query: { patient : orthancId}
+                })
             },
 
             // The following are helper-functions
