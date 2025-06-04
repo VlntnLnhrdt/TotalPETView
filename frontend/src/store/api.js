@@ -141,3 +141,33 @@ export async function getPreview(instanceOrthancId) {
       throw error
     }
 }
+
+
+export async function uploadDicomFiles(files) {
+  const formData = new FormData()
+
+  files.forEach((file, index) => {
+    formData.append('files', file)
+  });
+
+  try {
+        const response = await fetch(apiURL + '/upload', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCSRFToken(),
+        },
+        credentials: 'include',
+        body: formData
+      })
+  
+      if (!response.ok) {
+        throw new Error(`Fehler beim Hochladen der Daten: ${response.status}`)
+      }
+  
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Fehler beim Hochladen der Daten:', error)
+      throw error
+    }
+}
