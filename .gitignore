@@ -1,4 +1,9 @@
+# Virtuelle umgebungen
 kap-server/
-backend/api/__pycache__/urls.cpython-313.pyc
-backend/api/__pycache__/views.cpython-313.pyc
+venv/
+
+# Datenbanken
 backend/db.sqlite3
+
+# Python Spezifisch
+**/__pycache__/*
