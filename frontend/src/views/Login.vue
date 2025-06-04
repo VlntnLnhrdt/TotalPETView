@@ -1,5 +1,9 @@
 <template>
     <div id="login">
+        <div class="loading-status" :class="{ 'fade-away': !isLoading}">
+            <div class="loading-symbol" :class="{ 'success' : !isLoading && loadingResult, 'error' : !isLoading && !loadingResult }"></div>
+            <p v-if="loadingText">{{ loadingText }}</p>
+        </div>
         <form @submit.prevent="login">
             <h1>Login</h1>
             <input v-model="email" id="email" type="text" required @input="resetError" placeholder="Email">
@@ -14,6 +18,9 @@
     import {
         useAuthStore
     } from '../store/auth'
+    import {
+        setLoadingStatus
+    } from '../store/utils'
 
 export default {
     setup() {
@@ -26,14 +33,23 @@ export default {
         return {
             email: "",
             password: "",
-            error: ""
+            error: "",
+
+            isLoading: false,
+            loadingText: "Willkommen",
+            loadingResult: true
         }
     },
     methods: {
         async login() {
+            setLoadingStatus(this, true, "Prüfe Logindaten", true)
+
             await this.authStore.login(this.email, this.password, this.$router)
             if (!this.authStore.isAuthenticated) {
                 this.error = 'Login failed. Please check your credentials.'
+                setLoadingStatus(this, false, "Login fehlgeschlagen", false)
+            } else {
+                setLoadingStatus(this, false, "Login erfolgreich", true)
             }
         },
         resetError() {
