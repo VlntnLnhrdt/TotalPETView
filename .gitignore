@@ -7,3 +7,4 @@ backend/db.sqlite3
 
 # Python Spezifisch
 **/__pycache__/*
+backend/db.sqlite3
