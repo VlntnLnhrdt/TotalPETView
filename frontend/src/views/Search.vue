@@ -107,6 +107,10 @@
         getStudySeries,
         getPreview
     } from '../store/api';
+    import {
+        formatDate,
+        setLoadingStatus
+    } from '../store/utils'
 
 
     export default {
@@ -136,49 +140,49 @@
         methods: {
             // The following are request-functions
             async searchPatients() {
-
                 this.series = []
 
-                if (this.query.length < 2) {
+                if (this.query.length < 1) {
                     this.patients = []
                     return
                 }
+                setLoadingStatus(this, true, "Lade Patienten", true)
 
                 try {
                     const response = await searchPatients(this.query)
                     this.patients = response
-                    this.setLoadingStatus(false, "Patienten gefunden")
+                    setLoadingStatus(this, false, "Patienten gefunden", true)
                 } catch (error) {
                     console.error('Fehler bei der Suche:', error)
                     this.patients = []
-                    this.setLoadingStatus(false, "Suche nach Patienten fehlgeschlagen", false)
+                    setLoadingStatus(this, false, "Suche nach Patienten fehlgeschlagen", false)
                 }
             },
             async selectPatient(orthancId) {
-                this.setLoadingStatus(true, "Lade Studien")
+                setLoadingStatus(this, true, "Lade Studien", true)
                 try {
                     const response = await getPatientStudies(orthancId)
                     this.studies = response
-                    this.setLoadingStatus(false, "Studien geladen")
+                    setLoadingStatus(this, false, "Studien erfolgreich geladen", true)
                 } catch (error) {
                     console.error('Fehler bei Studiensuche:', error)
                     this.studies = []
-                    this.setLoadingStatus(false, "Studien konnten nicht geladen werden", false)
+                    setLoadingStatus(this, false, "Studien konnten nicht geladen werden", false)
                 }
 
                 this.activePatient = orthancId
             },
             async selectStudy(study) {
-                this.setLoadingStatus(true, "Lade Series")
+                setLoadingStatus(this, true, "Lade Series", true)
 
                 try {
                     const response = await getStudySeries(study.ID)
                     this.series = response
-                    this.setLoadingStatus(false, "Series geladen")
+                    setLoadingStatus(this, false, "Series erfolgreich geladen", true)
                 } catch (error) {
                     console.error('Fehler bei Studiensuche:', error)
                     this.series = []
-                    this.setLoadingStatus(false, "Series konnten nicht geladen werden", false)
+                    setLoadingStatus(this, false, "Series konnten nicht geladen werden", false)
                 }
 
                 this.activeStudy = study
@@ -189,7 +193,7 @@
             },
 
             async loadPreviewUrls() {
-                this.setLoadingStatus(true, "Lade Previews")
+                setLoadingStatus(this, true, "Lade Previews", true)
 
                 for (const serie of this.series) {
                     const instanceId = serie.Instances[0]
@@ -197,13 +201,15 @@
                         try {
                             const blobUrl = await getPreview(instanceId)
                             this.previews[instanceId] = blobUrl
+                            setLoadingStatus(this, false, "Previews wurden erfolgreich geladen", true)
                         } catch (e) {
                             console.error('Laden der Previews fehlgeschlagen:', e);
+                            setLoadingStatus(this, false, "Laden der Previews fehlgeschlagen", false)
                         }
                     }
                 }
 
-                this.setLoadingStatus(false, "Ende")
+                
             },
             loadViewer(orthancId) {
                 this.router.push({
@@ -214,14 +220,13 @@
 
             // The following are helper-functions
             formatDate(dateString) {
-                if (!dateString) return ""
-                return `${dateString.slice(6, 8)}.${dateString.slice(4, 6)}.${dateString.slice(0, 4)}`
+                return formatDate(dateString)
             },
-            setLoadingStatus(status, text, result=true) {
-                this.isLoading = status
-                this.loadingText = text
-                this.loadingResult = result
-            }
+            // setLoadingStatus(status, text, result=true) {
+            //     this.isLoading = status
+            //     this.loadingText = text
+            //     this.loadingResult = result
+            // }
         }
     }
 </script>
