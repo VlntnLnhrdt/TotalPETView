@@ -370,7 +370,7 @@ p.error-message {
 }
 
 #search .filterandcontent .searchresults .resultlist {
-    width: 100%;
+    max-width: 100%;
     color: var(--darkblue);
     font-size: var(--big);
 }
@@ -418,7 +418,7 @@ p.error-message {
 }
 
 #search .filterandcontent .searchresults .resultlist .patient .studies {
-    width: 100%;
+    max-width: 100%;
     margin-left: 20px;
     text-align: center;
     border-top: dashed 1px var(--darkgrey);
