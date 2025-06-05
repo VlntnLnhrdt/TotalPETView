@@ -8,10 +8,8 @@ import json
 ORTHANC_URL = 'http://localhost:8042'  # Orthanc-URL
 ORTHANC_AUTH = ('alice', 'alicePassword')  # Falls Basic Auth benötigt wird # FIXME sollte in prod geändert werden
 
-@require_POST
 @login_required
 def get_patient_data(request, orthancId):
-    print("wtf")
     try:
         orthanc_response = requests.get(
             f"{ORTHANC_URL}/patients/{orthancId}",
@@ -74,7 +72,6 @@ def search_patients(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-@require_POST
 @login_required
 def patient_studies(request, orthancId):
     try:
@@ -99,7 +96,6 @@ def patient_studies(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-@require_POST
 @login_required
 def study_series(request, orthancId):
     try:
@@ -121,7 +117,6 @@ def study_series(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-@require_POST
 @login_required
 def patient_series(request, orthancId):
     try:
@@ -143,10 +138,8 @@ def patient_series(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-@require_POST
 @login_required
 def instance_preview(request, orthancId):
-    print(orthancId)
     try:
         orthanc_response = requests.get(
             f"{ORTHANC_URL}/instances/{orthancId}/preview",
@@ -162,6 +155,27 @@ def instance_preview(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@require_POST
+@login_required
+def instance_file(request, instance_id):
+    print("instance file request ###############################################")
+    try:
+        orthanc_response = requests.get(
+            f"{ORTHANC_URL}/instances/{instance_id}/file",
+            auth=ORTHANC_AUTH,
+            stream=True
+        )
+
+        if orthanc_response.status_code != 200:
+            return JsonResponse({'error': 'Fehler bei der Verbindung zu ORthanc'}, status=orthanc_response.status_code)
+        
+        response = HttpResponse(orthanc_response.raw,
+                                content_type='application/dicom')
+        response['Content-Disposition'] = f'inline; filename="{instance_id}.dcm"'
+        return response 
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 
