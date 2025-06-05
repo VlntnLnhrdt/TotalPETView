@@ -6,7 +6,11 @@
         </div>
             
         <div class="toolbar">
-            <p>Werkzeugleiste</p>
+            <div class="category">
+                <div class="tool" @click="newWorkSpace">
+                    <img src="../assets/images/toolbar/newWorkspaceIcon.png" alt="NewWorkspace Icon" title="Öffnet ein neues Fenster mit dem selben Inhalt">
+                </div>
+            </div>
         </div>
 
         <div class="workspace">
@@ -24,13 +28,15 @@
                     </div>
 
                     <div class="series">
-                        <div class="serie" v-for="serie in study.Series" @click="addSeries(serie)">
-                            <div class="preview">
-                                <img :src="'http://localhost:8042/instances/' + serie.Instances[0].OrthancID + '/preview'" alt="Serie-Preview">
+                        <div class="serie" v-for="serieId in study.Series" :key="serieId" draggable="true" @dragstart="onDragStart(serieId)">
+                            <div class="preview" v-if="seriesMap[serieId]">
+                                <img v-if="previews[seriesMap[serieId].Instances[0]]"
+                                    :src="previews[seriesMap[serieId].Instances[0]]"
+                                    alt="Serie-Preview">
                             </div>
-                            <div class="description">
-                                <p>{{ serie.SeriesNumber || '_' }} - {{ serie.Modality || 'Unbekannt' }}</p>
-                                <p class="prod">{{ serie.Manufacturer || 'Unbekannt' }}</p>
+                            <div class="description" v-if="seriesMap[serieId]">
+                                <p>{{ seriesMap[serieId].MainDicomTags.SeriesDescription || '_' }} - {{ seriesMap[serieId].MainDicomTags.PerformedProcedureStepDescription || 'Unbekannt' }}</p>
+                                <p class="prod">{{ seriesMap[serieId].MainDicomTags.ProtocolName || 'Unbekannt' }}</p>
                             </div>
                         </div>
                     </div>
@@ -38,7 +44,7 @@
             </div>
 
             <div id="dicom-viewer" class="viewport">
-                <div id="viewport-1" class="viewbox"></div>
+                <div id="viewport-1" class="viewbox" @dragover.prevent @drop="onDrop(1)"></div>
             </div>
         </div>
 
@@ -52,12 +58,13 @@
     import {
         getPatientData,
         getPatientStudies,
-        getPatientSeries
+        getPatientSeries,
+        getPreview
     } from '../store/api';
-    // import {
-    //     formatDate,
-    //     setLoadingStatus
-    // } from '../store/utils'
+    import {
+        formatDate,
+        setLoadingStatus
+    } from '../store/utils'
 
 
     export default {
@@ -74,10 +81,11 @@
                 loadingResult: true,
                 patientId: '',
                 patientData: null,
-                studies: null,
+                studies: [],
                 openStudies: [],
-                series: null,
+                seriesMap: {},
                 previews: {},
+                draggedSerie: null,
             }
         },
         mounted() {
@@ -89,57 +97,129 @@
         methods: {
             async loadPatientData() {
 
+                setLoadingStatus(this, true, "Lade Patientendaten", true)
+
                 if (!this.patientId) {
                     console.error("Keine Patienten-Id gefunden")
+                    setLoadingStatus(this, false, "Keine Patienten-Id gefunden", false)
                     return
                 }
-
-                this.setLoadingStatus(this, true, "Lade Patientendaten")
 
                 try {
                     const data = await getPatientData(this.patientId)
                     this.patientData = data
-                    this.setLoadingStatus(false, "Patientendaten geladen")
+
+                    console.log('Patientendaten:', data) // FIXME später entfernen
+                    setLoadingStatus(this, false, "Patientendaten erfolgreich geladen", true)
                 } catch (error) {
                     console.error("Fehler beim Laden der Patientendaten:", error)
-                    this.setLoadingStatus(false, "Fehler beim Laden", false)
+                    setLoadingStatus(this, false, "Fehler beim Laden der Patientendaten", false)
                 }
             },
             async loadPatientStudies() {
-                this.setLoadingStatus(true, "Lade Studien")
+                setLoadingStatus(this, true, "Lade Studien", true)
                 try {
                     const response = await getPatientStudies(this.patientId)
                     this.studies = response
-                    this.setLoadingStatus(false, "Studien geladen")
+                    console.log("Studien:", response) // FIXME später entfernen
+                    setLoadingStatus(this, false, "Studien erfolgreich geladen", true)
                 } catch (error) {
                     console.error('Fehler bei Studiensuche:', error)
                     this.studies = []
-                    this.setLoadingStatus(false, "Studien konnten nicht geladen werden", false)
+                    setLoadingStatus(this, false, "Studien konnten nicht geladen werden", false)
                 }
 
             },
             async loadPatientSeries() {
-                this.setLoadingStatus(true, "Lade Series")
+                setLoadingStatus(this, true, "Lade Series", true)
+
+                this.seriesMap = {}
+
                 try {
                     const response = await getPatientSeries(this.patientId)
-                    this.series = response
-                    this.setLoadingStatus(false, "Series geladen")
+
+                    for (const serie of response) {
+                        const id = serie.ID
+                        if (id) {
+                            this.seriesMap[id] = serie
+                        } else {
+                            console.error('Serie hat keine ID', serie[0])
+                        }
+                    }
+
+                    console.log('Serien:', response);
+                    console.log('SeriesMap:', this.seriesMap);
+
+                    setLoadingStatus(this, false, "Series erfolgreich geladen", true)
+
+                    this.loadPreviewUrls()
+
                 } catch (error) {
                     console.error('Fehler bei Seriessuche:', error)
-                    this.series = []
-                    this.setLoadingStatus(false, "Series konnten nicht geladen werden", false)
+                    this.seriesMap = {}
+                    setLoadingStatus(this, false, "Series konnten nicht geladen werden", false)
+                }
+            },
+            async loadPreviewUrls() {
+                setLoadingStatus(this, true, "Lade Previews", true)
+
+                const previewPromises = []
+
+                for (const id in this.seriesMap) {
+                    const serie = this.seriesMap[id]
+                    const instanceId = serie.Instances[0]
+                    if (instanceId) {
+
+                        const promise = getPreview(instanceId)
+                            .then(blobUrl => {
+                                this.previews[instanceId] = blobUrl
+                            })
+                            .catch(error => {
+                                console.error('Laden der Previews fehlgeschlagen:', e);
+                            setLoadingStatus(this, false, "Laden der Preview von Instance" + instanceId + " fehlgeschlagen", false)
+                            })
+                        previewPromises.push(promise)
+                        
+                    }
+                } 
+
+                try {
+                    await Promise.all(previewPromises)
+                    setLoadingStatus(this, false, "Previews wurden erfolgreich geladen", true)
+                } catch {
+                    setLoadingStatus(this, false, "Laden der Previews fehlgeschlagen", false)
+                }
+            },
+            toggleStudy(study) {
+                const index = this.openStudies.findIndex(s => s.ID === study.ID)
+                if (index !== -1) {
+                    this.openStudies.splice(index, 1)
+                } else {
+                    this.openStudies.push(study)
                 }
             },
 
-            // The following are helper-functions
-            formatDate(dateString) {
-                if (!dateString) return ""
-                return `${dateString.slice(6, 8)}.${dateString.slice(4, 6)}.${dateString.slice(0, 4)}`
+            // The following are the functions used only for the DragAndDrop
+            onDragStart(serieId) {
+                this.draggedSerie = serieId
             },
-            setLoadingStatus(status, text, result=true) {
-                this.isLoading = status
-                this.loadingText = text
-                this.loadingResult = result
+            onDrop(viewportIndex) {
+                const serieId = this.draggedSerie
+                if (serieId && this.seriesMap[serieId]) {
+                    console.log("Serie", serieId, " in viewport nr ", viewportIndex, " gelegt", this.seriesMap[serieId])
+                }
+            },
+            
+
+            // The following are the function used in the toolbar
+            newWorkSpace() {
+                const features = 'height=0,width=0,scrollbars=yes,status=yes'
+                window.open(window.location.href, '_blank', features)
+            },
+
+            // Calls the formatDate in Utils.js
+            formatDate(dateString) {
+                return formatDate(dateString)
             }
         },
     }

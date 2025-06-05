@@ -493,9 +493,27 @@ p.error-message {
     height: 1.7em;
     background: linear-gradient(to right, var(--darkerblue), var(--blue));
     color: var(--lightergrey);
-    padding: 3px;
+    padding: 8px;
     border-bottom: solid 1px var(--lightergrey);
     border-top: solid 2px var(--lightergrey);
+}
+
+#viewer .toolbar .category {
+    height: 100%;
+    border-right: dotted var(--lightergrey) 1px;
+}
+
+#viewer .toolbar .category .tool {
+    height: 100%;
+    margin: auto 5px;
+}
+
+#viewer .toolbar .category .tool:hover {
+    cursor: pointer;
+}
+
+#viewer .toolbar .category .tool img {
+    height: 100%;
 }
 
 #viewer .workspace {
