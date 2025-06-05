@@ -44,7 +44,7 @@
             </div>
 
             <div id="dicom-viewer" class="viewport">
-                <div id="viewport-1" class="viewbox" @dragover.prevent @drop="onDrop(1)"></div>
+                <div id="viewport-1" class="viewbox" @dragover.prevent @drop="onDrop('viewport-1')"></div>
             </div>
         </div>
 
@@ -59,13 +59,50 @@
         getPatientData,
         getPatientStudies,
         getPatientSeries,
-        getPreview
-    } from '../store/api';
+        getPreview,
+        getDicomFileUrl
+    } from '../store/api'
     import {
         formatDate,
         setLoadingStatus
     } from '../store/utils'
 
+    // Cornerstone Imports
+    import { RenderingEngine, Enums, init as csInit, getRenderingEngine, registerImageLoader } from '@cornerstonejs/core'
+    
+    import dicomParser from 'dicom-parser'
+    import {
+        init as csToolsInit,
+        addTool,
+        ToolGroupManager,
+        Enums as csToolsEnums
+    } from '@cornerstonejs/tools'
+    import {
+        ZoomTool,
+        PanTool,
+        WindowLevelTool
+    } from '@cornerstonejs/tools'
+
+    // For Cornerstone
+    let cornerstoneInitialized = false
+    function initializeCornerstone() {
+        if (cornerstoneInitialized) return
+
+        csInit()
+        csToolsInit()
+
+        cornerstoneWADOImageLoader.external.dicomParser = dicomParser
+        cornerstoneWADOImageLoader.configure({ useWebWorkers: true, })
+
+        registerImageLoader('wadouri', cornerstoneWADOImageLoader.loadImage)
+        
+        // addTool(ZoomTool)
+        // addTool(PanTool)
+        // addTool(WindowLevelTool)
+        // addTool(StackScrollMouseWheelTool)
+        
+        cornerstoneInitialized = true
+    }
 
     export default {
         setup() {
@@ -89,9 +126,9 @@
             }
         },
         mounted() {
-            this.patientId = this.$route.query.patient,
-            this.loadPatientData(),
-            this.loadPatientStudies(),
+            this.patientId = this.$route.query.patient
+            this.loadPatientData()
+            this.loadPatientStudies()
             this.loadPatientSeries()
         },
         methods: {
@@ -203,11 +240,14 @@
             onDragStart(serieId) {
                 this.draggedSerie = serieId
             },
-            onDrop(viewportIndex) {
+            onDrop(viewportId) {
                 const serieId = this.draggedSerie
                 if (serieId && this.seriesMap[serieId]) {
-                    console.log("Serie", serieId, " in viewport nr ", viewportIndex, " gelegt", this.seriesMap[serieId])
+                    console.log("Serie", serieId, " in viewport ", viewportId, " gelegt", this.seriesMap[serieId])
                 }
+
+                this.initViewport(viewportId, this.seriesMap[serieId])
+                this.draggedSerie = null
             },
             
 
@@ -215,6 +255,71 @@
             newWorkSpace() {
                 const features = 'height=0,width=0,scrollbars=yes,status=yes'
                 window.open(window.location.href, '_blank', features)
+            },
+
+            // The following are the functions used for cornerstonejs
+
+            async initViewport(viewportid, serie) {
+
+                initializeCornerstone()
+
+                setLoadingStatus(this, true, "Initialisiere Serie", true)
+                // Get container
+                const element = document.getElementById(viewportid)
+                if (!element) {
+                    console.error("Viewport-Element nicht gefunden!")
+                    setLoadingStatus(this, false, "Viewport-Container nicht gefunden", false)
+                    return
+                }
+
+                // Create ImageIds
+                if (!serie || !serie.Instances || serie.Instances.length === 0) {
+                    console.error("Serie oder Instanzen fehlen!")
+                    setLoadingStatus(this, false, "Serie oder Instanzen Fehlen", false)
+                    return
+                }
+
+                const imageIds = serie.Instances.map(
+                    id => `wadouri:${getDicomFileUrl(id)}`
+                )
+
+                // Create RenderingEngine (or retreive it)
+                const renderingEngineId = 'MyRenderingEngine'
+                const viewportType = Enums.ViewportType.STACK
+
+
+                let renderingEngine
+                try {
+                    renderingEngine = new RenderingEngine(renderingEngineId)
+                } catch (e) {
+                    renderingEngine = getRenderingEngine(renderingEngineId)
+                }
+
+                const viewportInput = {
+                    viewportId: viewportid,
+                    type: viewportType,
+                    element,
+                    defaultOptions: {
+                        background: [0,0,0],
+                    },
+                }
+
+                renderingEngine.enableElement(viewportInput)
+
+                const viewport = renderingEngine.getViewport(viewportid)
+
+                if (!viewport) {
+                    console.error("Viewport konnte nicht geladen werden")
+                    setLoadingStatus(this, false, "Viewport konnte nicht geladen werden", false)
+                    return
+                }
+
+                await viewport.setStack(imageIds)
+
+                await viewport.render()
+
+                setLoadingStatus(this, false, "Viewport erfolgreich gerendert", true)
+
             },
 
             // Calls the formatDate in Utils.js
