@@ -4,7 +4,7 @@
             <div class="info">
                 <img src="../assets/images/mri_logo.png" alt="MRI-Logo">
                 <p class="progname">TotalPETView</p>
-                <p class="version">v0.2</p>
+                <p class="version">v0.3</p>
 
             </div>
 
