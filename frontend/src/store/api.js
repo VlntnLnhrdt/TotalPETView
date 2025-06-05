@@ -5,7 +5,7 @@ const apiURL = "http://localhost:8000/api"
 export async function getPatientData(patientOrthancId) {
     try {
         const response = await fetch(apiURL + '/patient/' + patientOrthancId, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken(),
@@ -52,7 +52,7 @@ export async function searchPatients(query) {
 export async function getPatientStudies(patientOrthancId) {
     try {
         const response = await fetch(apiURL + '/patient/' + patientOrthancId + '/studies', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken(),
@@ -75,7 +75,7 @@ export async function getPatientStudies(patientOrthancId) {
 export async function getStudySeries(studyOrthancId) {
     try {
         const response = await fetch(apiURL + '/study/' + studyOrthancId + '/series', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken(),
@@ -98,7 +98,7 @@ export async function getStudySeries(studyOrthancId) {
 export async function getPatientSeries(patientOrthancId) {
     try {
         const response = await fetch(apiURL + '/patient/' + patientOrthancId + '/series', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken(),
@@ -121,7 +121,7 @@ export async function getPatientSeries(patientOrthancId) {
 export async function getPreview(instanceOrthancId) {
     try {
         const response = await fetch(apiURL + '/instance/' + instanceOrthancId + '/preview', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken(),
@@ -140,6 +140,10 @@ export async function getPreview(instanceOrthancId) {
       console.error('Fehler beim Laden Previews:', error)
       throw error
     }
+}
+
+export function getDicomFileUrl(instanceOrthancId) {
+  return `${apiURL}/instance/${instanceOrthancId}/file`
 }
 
 
