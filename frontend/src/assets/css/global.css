@@ -489,6 +489,9 @@ p.error-message {
 }
 
 #viewer .toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     width: 100%;
     height: 1.7em;
     background: linear-gradient(to right, var(--darkerblue), var(--blue));
@@ -499,17 +502,23 @@ p.error-message {
 }
 
 #viewer .toolbar .category {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     height: 100%;
     border-right: dotted var(--lightergrey) 1px;
 }
 
 #viewer .toolbar .category .tool {
+    display: flex;
+    align-items: center;
     height: 100%;
     margin: auto 5px;
 }
 
 #viewer .toolbar .category .tool:hover {
     cursor: pointer;
+    background-color: var(--blue);
 }
 
 #viewer .toolbar .category .tool img {
@@ -607,10 +616,10 @@ p.error-message {
 }
 
 
-#viewer .workspace .viewport {
+#viewer .workspace #viewport-grid {
     display: grid;
     width: 100%;
-
+    height: 100%;
     grid-template-columns: auto;
     gap: 5px;
 }
