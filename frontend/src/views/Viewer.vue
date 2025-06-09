@@ -10,6 +10,15 @@
                 <div class="tool" @click="newWorkSpace">
                     <img src="../assets/images/toolbar/newWorkspaceIcon.png" alt="NewWorkspace Icon" title="Öffnet ein neues Fenster mit dem selben Inhalt">
                 </div>
+                <div class="tool" @click="changeGrid('1x2')">
+                    <img src="../assets/images/toolbar/changeGrid1x2.png" alt="ChangeGrid Icon 1x2" title="Ändere Viewport-Layout zu 1x2">
+                </div>
+                <div class="tool" @click="changeGrid('2x1plus1')">
+                    <img src="../assets/images/toolbar/changeGrid2x1plus1.png" alt="ChangeGrid Icon 2x1plus1" title="Ändere Viewport-Layout zu 2x1 plus 1">
+                </div>
+                <div class="tool" @click="changeGrid('2x2')">
+                    <img src="../assets/images/toolbar/changeGrid2x2.png" alt="ChangeGrid Icon 2x2" title="Ändere Viewport-Layout zu 2x2">
+                </div>
             </div>
         </div>
 
@@ -43,8 +52,8 @@
                 </div>
             </div>
 
-            <div id="dicom-viewer" class="viewport">
-                <div id="viewport-1" class="viewbox" @dragover.prevent @drop="onDrop('viewport-1')"></div>
+            <div id="viewport-grid" class="viewport">
+                <div v-for="viewport in viewportcontainers" :id=viewport class="viewbox" @dragover.prevent @drop="onDrop(viewport)"></div>
             </div>
         </div>
 
@@ -88,6 +97,7 @@
                 seriesMap: {},
                 previews: {},
                 draggedSerie: null,
+                viewportcontainers: ["viewport-1", "viewport-2"],
             }
         },
         mounted() {
@@ -217,6 +227,53 @@
                 const features = 'height=0,width=0,scrollbars=yes,status=yes'
                 window.open(window.location.href, '_blank', features)
             },
+            changeGrid(format) {
+                //<div id="viewport-1" class="viewbox" @dragover.prevent @drop="onDrop('viewport-1')"></div>
+                switch (format) {
+                    case "1x2":
+                        console.log("Change to 1x2")
+                        this.viewportcontainers = this.viewportcontainers.slice(0,2)
+                        for (let i = 0; i < 2; i++) {
+                            this.viewportcontainers[i] = `viewport-${i}`
+                        }
+                        this.$nextTick(() => {
+                            document.getElementById(this.viewportcontainers[0]).style.gridArea = "1 / 1 / 2 / 2"
+                            document.getElementById(this.viewportcontainers[1]).style.gridArea = "1 / 2 / 2 / 3"
+                        })
+                        break;
+                    case "2x1plus1":
+                        console.log("Change to 2x1plus1")
+                        this.viewportcontainers = this.viewportcontainers.slice(0,3)
+                        for (let i = 0; i < 3; i++) {
+                            this.viewportcontainers[i] = `viewport-${i}`
+                        }
+                        this.$nextTick(() => {
+                            document.getElementById(this.viewportcontainers[0]).style.gridArea = "1 / 1 / 2 / 2"
+                            document.getElementById(this.viewportcontainers[1]).style.gridArea = "2 / 1 / 3 / 2"
+                            document.getElementById(this.viewportcontainers[2]).style.gridArea = "1 / 2 / 3 / 3"
+                        })
+                        break;
+                    case "2x2":
+                        console.log("Change to 2x2")
+                        this.viewportcontainers = this.viewportcontainers.slice(0,4)
+                        for (let i = 0; i < 4; i++) {
+                            this.viewportcontainers[i] = `viewport-${i}`
+                        }
+                        this.$nextTick(() => {
+                            document.getElementById(this.viewportcontainers[0]).style.gridArea = "1 / 1 / 2 / 2"
+                            document.getElementById(this.viewportcontainers[1]).style.gridArea = "1 / 2 / 2 / 3"
+                            document.getElementById(this.viewportcontainers[2]).style.gridArea = "2 / 1 / 3 / 2"
+                            document.getElementById(this.viewportcontainers[3]).style.gridArea = "2 / 2 / 3 / 3"
+                        })
+                        break;
+                    default:
+                        console.error("Format ist nicht definiert")
+                        
+
+
+                }
+            },
+
 
             async initViewport(viewportid, serie) {
 
