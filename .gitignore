@@ -11,4 +11,4 @@ backend/db.sqlite3
 # Orthanc Datenbank und Beispieldateien
 orthanc/orthanc-db
 orthanc/example
-orthanc/example/README.md
+!orthanc/example/README.md
