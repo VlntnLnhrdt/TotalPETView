@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 import requests
 import json
 
-ORTHANC_URL = 'http://localhost:8042'  # Orthanc-URL
+ORTHANC_URL = 'http://orthanc:8042'  # Orthanc-URL
 ORTHANC_AUTH = ('alice', 'alicePassword')  # Falls Basic Auth benötigt wird # FIXME sollte in prod geändert werden
 
 @login_required
@@ -57,6 +57,9 @@ def search_patients(request):
                 }
             })
         )
+
+        print("Orthanc Rsponse:")
+        print(orthanc_response.json())
 
 
         if orthanc_response.status_code != 200:

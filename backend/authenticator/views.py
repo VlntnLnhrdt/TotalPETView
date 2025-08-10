@@ -18,17 +18,14 @@ def set_csrf_token(request):
 
 @require_http_methods(['POST'])
 def login_view(request):
-    print("bitte")
     try:
         data = json.loads(request.body.decode('utf-8'))
         email = data['email']
         password = data['password']
     except json.JSONDecodeError:
-        print("lol1")
         return JsonResponse(
             {'success': False, 'message': 'Invalid JSON'}, status=400
         )
-    print("lol")
 
     user = authenticate(request, username=email, password=password)
 
