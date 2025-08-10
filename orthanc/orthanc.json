@@ -1,0 +1,28 @@
+{
+    "Name": "Orthanc for Total",
+    "RemoteAccessAllowed": true,
+    "AuthenticationEnabled": true,
+    "RegisteredUsers": {
+        "alice": "alicePassword"
+    },
+
+    "DicomAet": "ORTHANC_TPV",
+    "DicomPort": 4242,
+    "HttpPort": 8042,
+
+    "Plugins": [
+        "/usr/share/orthanc/plugins"
+    ],
+
+    "DicomWeb": {
+        "Enable": true,
+        "Root": "/dicom-web/",
+        "StowMaxInstances": 10,
+        "StowMaxSize": 104857600
+    },
+
+    "OrthancExplorer2": {
+        "Enable": true,
+        "ServeAssets": true
+    }
+}
