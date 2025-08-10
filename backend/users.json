@@ -1,0 +1,20 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$Yd3f9YJFblgmayIzu7KuIv$UYOzbFmAZtS1ecHm7pYbJl3Oq+ek+N947YP18aYPKgA=",
+    "last_login": "2025-08-10T13:53:04.943Z",
+    "is_superuser": true,
+    "username": "valentin",
+    "first_name": "",
+    "last_name": "",
+    "email": "valentin.linhardt@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-06-05T16:58:22.252Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]
