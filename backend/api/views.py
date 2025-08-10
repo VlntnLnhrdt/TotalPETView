@@ -33,7 +33,7 @@ def get_patient_data(request, orthancId):
 @require_POST
 @login_required
 def search_patients(request):
-    print("hallo")
+    print("hallo welt")
     try:
         body = json.loads(request.body)
         query = body.get('query', '').strip()

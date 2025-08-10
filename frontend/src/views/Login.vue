@@ -6,7 +6,7 @@
         </div>
         <form @submit.prevent="login">
             <h1>Login</h1>
-            <input v-model="username" id="username" type="text" required @input="resetError" placeholder="Benutzername">
+            <input v-model="email" id="email" type="text" required @input="resetError" placeholder="Email">
             <input v-model="password" id="password" type="password" required @input="resetError" placeholder="Passwort">
             <button type="submit">Login</button>
         </form>
@@ -31,7 +31,7 @@ export default {
     },
     data() {
         return {
-            username: "",
+            email: "",
             password: "",
             error: "",
 
@@ -44,7 +44,7 @@ export default {
         async login() {
             setLoadingStatus(this, true, "Prüfe Logindaten", true)
 
-            await this.authStore.login(this.username, this.password, this.$router)
+            await this.authStore.login(this.email, this.password, this.$router)
             if (!this.authStore.isAuthenticated) {
                 this.error = 'Login failed. Please check your credentials.'
                 setLoadingStatus(this, false, "Login fehlgeschlagen", false)
