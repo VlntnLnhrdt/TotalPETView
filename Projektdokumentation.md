@@ -16,13 +16,16 @@ Das System wird von medizinischem Fachpersonal, wie Radiologen oder Forschern, g
 ### 2.1 Funktionale Anforderungen
 - [x] Upload von DICOM-Dateien
 - [x] Anzeige und Suche in PACS
-- [x] Visualisierung im Viewer
 - [x] Benutzerverwaltung
+- [ ] Visualisierung im Viewer
 
 ### 2.2 Nicht-funktionale Anforderungen
-- [ ] Performance: Schnelle Ladezeiten für Bilder und Suchergebnisse.
-- [x] Sicherheit: Sichere Authentifizierung und verschlüsselte Datenübertragung.
+- [X] Performance: Schnelle Ladezeiten für Bilder und Suchergebnisse.
+- [ ] Sicherheit: Sichere Authentifizierung und verschlüsselte Datenübertragung. ()
 - [ ] Erweiterbarkeit: Modulare Architektur zur einfachen Integration neuer Funktionen.
+
+### 2.3 Nicht erfüllbare Anforderungen für die Zukunft
+- Sicherheit: Sichere Authentifizierung und verschlüsselte Datenübertragung. ()
 
 ---
 
@@ -52,39 +55,23 @@ Das System besteht aus drei Hauptkomponenten:
 ---
 
 ## 4. Installation & Setup
-### 4.1 Voraussetzungen
-- Python >= 3.8
-- Node.js >= 18.x
-- Docker und Docker Compose
 
-### 4.2 Installationsschritte
+### 4.1 Installation
+
+Für die Installation muss das [GitHub Repository](https://github.com/VlntnLnhrdt/TotalPETView.git) zunächst geklint werden:
+
 ```bash
-# 1. Orthanc-Server starten
-# (Eine orthanc.json Konfigurationsdatei und ein docker-compose.yml werden vorausgesetzt)
-docker-compose up -d orthanc
-
-# 2. Backend installieren
-cd backend
-pip install -r requirements.txt
-python manage.py migrate
-
-# 3. Frontend installieren
-cd ../frontend
-npm install
+git clone https://github.com/VlntnLnhrdt/TotalPETView.git
+cd TotalPETView
 ```
 
-### 4.3 Starten der Anwendung
-```bash
-# Backend-Server starten
-cd backend
-python manage.py runserver
+Eine weitere Installation ist nicht notwendig. Das Ausführen und die Ersteinrichtung wird in [4.2 Ausführung](#42-ausführung) beschrieben.
 
-# Frontend-Entwicklungsserver starten
-cd ../frontend
-npm run dev
+### 4.2 Ausführung
 
-# Orthanc läuft bereits im Hintergrund via Docker
-```
+Alle Systeme (Fontend, Backend, Orthanc) werden mittels eine Docker Compose Datei geladen, konfiguriert und gestartet. Hierfür muss im Wurzelverzeichnis des Projektes der Befehl ```docker compose up -d``` ausgeführt werden. Dies startet den TPV und alle dazugehörigen Services. Bei der Erstausführung sind in Orthanc noch keine Patientendaten enthalten. [Hier](http://vlntn.de/tpvexamples/) können auf meiner persönlichen Webseite [vlntn.de](http://vlntn.de/) Beispielpatienten mit Studien heruntergeladen werden. Diese werden als .zip Datei zur Verfügung gestellt.
+
+Alternativ kann auch direkt auf das Orthanc zugegriffen und manuell Dateien hochgeladen und bearbeitet werden. Dabei muss man sich auf der [Weboberfläche von Orthanc](http://localhost:8042/ui/app/index.html#/) mit den Zugangsdaten anmelden (siehe [XX. Pacs (Orthanc)](#pacs-orthanc)). 
 
 ---
 
