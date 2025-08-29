@@ -9,7 +9,10 @@ import Viewer from './views/Viewer.vue'
 const routes = [
     {
         path: '/',
-        redirect: '/search',
+        redirect: () => {
+            const authStore = useAuthStore();
+            return authStore.isAuthenticated ? '/search': '/login';
+        },
         meta: {
             needsAuth: false,
         },
