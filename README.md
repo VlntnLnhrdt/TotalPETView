@@ -42,7 +42,15 @@ Nachfolgend wir die gesamte Architektur des Projektes beschrieben, um einen deta
 
 ### 3.1 Übersicht
 
-<!-- TODO Hier weiter machen -->
+Der TPV besteht aus drei großen Komponenten: Dem PACS, Django Backend, Vuejs Frontend.
+
+Zur Speicherung und Verwaltung der medizinischen Daten wird als PACS "Orthanc" verwendet. Orthanc ist ein kostenloser, open-source leichtgewichtiger DICOM-Server. Auf diesem werden die DICOM Dateien gespeichert und entsprechend abgerufen.
+
+Für die Weboberfläche wird Vuejs verwendet, ist ein clientseitiges JavaScript-Webframework zur Erstellung von Webanwendungen. Hierüber wird der Anwender ausschließlich mit dem TPV interagierend.
+
+Als Zwischenglied und Backend zwischen diesen beiden Services wird Django, ein high-level Python web framework, eingesetzt. Django kann auch zur Darstellung vom Webseiten genutzt werden, wird im Rahmen dieses Projektes aber als reine Schnittstelle zwischen dem Frontend und Orthanc verwendet, sowie zur Benutzerverwaltung.
+
+### 3.2 Orthanc
 
 ## Projektumfang
 
