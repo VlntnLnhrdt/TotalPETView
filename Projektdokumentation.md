@@ -58,7 +58,7 @@ Das System besteht aus drei Hauptkomponenten:
 
 ### 4.1 Installation
 
-Für die Installation muss das [GitHub Repository](https://github.com/VlntnLnhrdt/TotalPETView.git) zunächst geklint werden:
+Für die Installation muss das [GitHub Repository](https://github.com/VlntnLnhrdt/TotalPETView.git) zunächst geklont werden:
 
 ```bash
 git clone https://github.com/VlntnLnhrdt/TotalPETView.git

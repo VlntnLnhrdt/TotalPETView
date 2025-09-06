@@ -52,6 +52,11 @@ Als Zwischenglied und Backend zwischen diesen beiden Services wird Django, ein h
 
 ### 3.2 Orthanc
 
+
+### 3.3 Vuejs
+
+### 3.4 Django
+
 ## Projektumfang
 
 1. Entwicklung eines webbasierten DICOM-Viewers
