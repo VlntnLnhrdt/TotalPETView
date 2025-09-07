@@ -5,7 +5,7 @@ import json
 
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from .forms import CreateUserForm
 
 @ensure_csrf_cookie
@@ -44,7 +44,7 @@ def logout_view(request):
 def user(request):
     if request.user.is_authenticated:
         return JsonResponse(
-            {'username': request.user.username, 'email': request.user.email}
+            {'username': request.user.username, 'email': request.user.email, 'is_superuser': request.user.is_superuser}
         )
     return JsonResponse(
         {'message': 'Not logged in'}, status=401
@@ -52,6 +52,9 @@ def user(request):
 
 @require_http_methods(['POST'])
 def register(request):
+    if not request.user.is_superuser:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+
     data = json.loads(request.body.decode('utf-8'))
     form = CreateUserForm(data)
     if form.is_valid():
@@ -60,3 +63,12 @@ def register(request):
     else:
         errors = form.errors.as_json()
         return JsonResponse({'error': errors}, status=400)
+
+@require_http_methods(['GET'])
+def get_all_users(request):
+    if not request.user.is_superuser:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+    
+    User = get_user_model()
+    users = User.objects.all().values('username', 'email', 'date_joined')
+    return JsonResponse(list(users), safe=False)

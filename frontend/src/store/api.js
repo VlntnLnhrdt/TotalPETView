@@ -1,6 +1,58 @@
 import { getCSRFToken } from "./auth"
 
 const apiURL = "http://localhost:8000/api"
+const authApiURL = "http://localhost:8000/auth"
+
+
+export async function getAllUsers() {
+    try {
+        const response = await fetch(`${authApiURL}/users`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Fehler beim Abrufen der Benutzer: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Fehler bei der Benutzerabfrage:', error);
+        throw error;
+    }
+}
+
+export async function registerUser(userData) {
+    try {
+        const response = await fetch(`${authApiURL}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include',
+            body: JSON.stringify(userData),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const error = new Error(data.message || 'Fehler bei der Registrierung');
+            error.response = { data };
+            throw error;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Fehler bei der Registrierung:', error);
+        throw error;
+    }
+}
 
 export async function getPatientData(patientOrthancId) {
     try {

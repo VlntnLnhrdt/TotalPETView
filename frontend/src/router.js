@@ -2,10 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from './store/auth.js'
 import NotFound from './views/NotFound.vue'
 import Login from './views/Login.vue'
-import Register from './views/Register.vue'
 import Search from './views/Search.vue'
 import Viewer from './views/Viewer.vue'
 import Upload from './views/Upload.vue'
+import UserManagement from './views/UserManagement.vue'
 
 const routes = [
     {
@@ -35,14 +35,6 @@ const routes = [
         },
     },
     {
-        path: '/register',
-        name: 'register',
-        component: Register,
-        meta: {
-            needsAuth: false,
-        },
-    },
-    {
         path: '/viewer',
         name: 'viewer',
         component: Viewer,
@@ -54,6 +46,14 @@ const routes = [
         path: '/upload',
         name: 'upload',
         component: Upload,
+        meta: {
+            needsAuth: true,
+        },
+    },
+    {
+        path: '/usermanagement',
+        name: 'usermanagement',
+        component: UserManagement,
         meta: {
             needsAuth: true,
         },

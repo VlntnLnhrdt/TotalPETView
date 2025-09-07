@@ -12,6 +12,11 @@ export const useAuthStore = defineStore('auth', {
           isAuthenticated: false,
         }
   },
+  getters: {
+    isSuperuser: (state) => {
+      return state.user?.is_superuser ?? false;
+    },
+  },
   actions: {
     async setCsrfToken() {
       await fetch(authURL+'/set-csrf-token', {
@@ -35,6 +40,7 @@ export const useAuthStore = defineStore('auth', {
       })
       const data = await response.json()
       if (data.success) {
+        await this.fetchUser(); // Fetch user data immediately
         this.isAuthenticated = true
         this.saveState()
         if (router) {

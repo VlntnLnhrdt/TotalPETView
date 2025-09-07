@@ -9,6 +9,7 @@
             </div>
 
             <div v-if="authStore.isAuthenticated" class="navbar">
+                <router-link v-if="authStore.isSuperuser" to="/usermanagement"><img src="../assets/images/icon_user.png" alt="Users-Icon"></router-link>
                 <router-link to="/search"><img src="../assets/images/icon_search.png" alt="Search-Icon"></router-link>
                 <router-link to="/upload"><img src="../assets/images/icon_upload.png" alt="Upload-Icon"></router-link>
                 <router-link @click="logout" to="/login"><img src="../assets/images/icon_logout.png" alt="User-Icon"></router-link>
