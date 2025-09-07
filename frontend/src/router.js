@@ -5,6 +5,7 @@ import Login from './views/Login.vue'
 import Register from './views/Register.vue'
 import Search from './views/Search.vue'
 import Viewer from './views/Viewer.vue'
+import Upload from './views/Upload.vue'
 
 const routes = [
     {
@@ -45,6 +46,14 @@ const routes = [
         path: '/viewer',
         name: 'viewer',
         component: Viewer,
+        meta: {
+            needsAuth: true,
+        },
+    },
+    {
+        path: '/upload',
+        name: 'upload',
+        component: Upload,
         meta: {
             needsAuth: true,
         },

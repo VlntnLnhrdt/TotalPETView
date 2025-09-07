@@ -172,13 +172,58 @@ def instance_file(request, instance_id):
         if orthanc_response.status_code != 200:
             return JsonResponse({'error': 'Fehler bei der Verbindung zu ORthanc'}, status=orthanc_response.status_code)
         
-        response = HttpResponse(orthanc_response.raw,
-                                content_type='application/dicom')
         response['Content-Disposition'] = f'inline; filename="{instance_id}.dcm"'
         return response 
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@require_POST
+@login_required
+def upload_dicom_files(request):
+    if not request.FILES:
+        return JsonResponse({'error': 'Keine Dateien zum Hochladen gefunden'}, status=400)
+
+    files = request.FILES.getlist('files')
+    successful_uploads = []
+    failed_uploads = []
+
+    for file in files:
+        try:
+            # Datei an Orthanc senden
+            orthanc_response = requests.post(
+                f"{ORTHANC_URL}/instances",
+                auth=ORTHANC_AUTH,
+                headers={'Content-Type': 'application/dicom'},
+                data=file.read()
+            )
+
+            if orthanc_response.status_code == 200:
+                successful_uploads.append(file.name)
+            else:
+                failed_uploads.append({
+                    'filename': file.name,
+                    'status': orthanc_response.status_code,
+                    'error': orthanc_response.text
+                })
+        except Exception as e:
+            failed_uploads.append({
+                'filename': file.name,
+                'error': str(e)
+            })
+
+    if not failed_uploads:
+        return JsonResponse({
+            'message': f'{len(successful_uploads)} Dateien erfolgreich hochgeladen.',
+            'successful_uploads': successful_uploads
+        }, status=200)
+    else:
+        return JsonResponse({
+            'message': 'Einige Dateien konnten nicht hochgeladen werden.',
+            'successful_uploads': successful_uploads,
+            'failed_uploads': failed_uploads
+        }, status=207) # Multi-Status
 
 
 

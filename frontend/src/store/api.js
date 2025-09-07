@@ -148,30 +148,36 @@ export function getDicomFileUrl(instanceOrthancId) {
 
 
 export async function uploadDicomFiles(files) {
-  const formData = new FormData()
-
-  files.forEach((file, index) => {
-    formData.append('files', file)
+  const formData = new FormData();
+  // Vue 3 ref object -> .value
+  files.forEach(file => {
+      formData.append('files', file);
   });
 
   try {
-        const response = await fetch(apiURL + '/upload', {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': getCSRFToken(),
-        },
-        credentials: 'include',
-        body: formData
-      })
-  
+      const response = await fetch(`${apiURL}/upload`, {
+          method: 'POST',
+          headers: {
+              // 'Content-Type': 'multipart/form-data' wird vom Browser automatisch mit Boundary gesetzt
+              'X-CSRFToken': getCSRFToken(),
+          },
+          credentials: 'include',
+          body: formData
+      });
+
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Fehler beim Hochladen der Daten: ${response.status}`)
+          // Wir werfen einen Fehler, der die Server-Antwort enthält
+          const error = new Error(data.message || 'Fehler beim Hochladen');
+          error.response = { data }; // Hängen die Daten für die UI an den Fehler an
+          throw error;
       }
-  
-      const data = await response.json()
-      return data
-    } catch (error) {
-      console.error('Fehler beim Hochladen der Daten:', error)
-      throw error
-    }
+
+      return data;
+  } catch (error) {
+      console.error('Fehler beim Hochladen der Daten:', error);
+      // Stellen sicher, dass der Fehler weitergeworfen wird, damit die UI ihn fangen kann
+      throw error;
+  }
 }
