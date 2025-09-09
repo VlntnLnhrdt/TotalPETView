@@ -2,7 +2,7 @@
 
 ## 1.1 Projektinformationen
 
-Dieses Projekt wurde im Rahmen des Moduls **Klinisches Anwendungsprojekt** der Technischen Universität München geschaffen. Dieses wurde von mir (Valentin Linhardt) eigenständig geplant, entwickelt und installiert, und ist auf [GitHub](https://github.com/VlntnLnhrdt/TotalPETView) frei verfügbar. Sollte das Projekt hier nicht mehr abrufbar sein, ist das Projekt zudem auf meiner persönlichen Webseite [vlntn.de](vlntn.de) gelistet, oder zumindest sind dort mögliche Kontaktdaten einsehbar.
+Dieses Projekt wurde im Rahmen des Moduls **Klinisches Anwendungsprojekt** der Technischen Universität München geschaffen. Dieses wurde von mir (Valentin Linhardt) eigenständig geplant, entwickelt und installiert, und ist auf [GitHub](https://github.com/VlntnLnhrdt/TotalPETView) frei verfügbar. Sollte das Projekt hier nicht mehr abrufbar sein, ist das Projekt zudem auf meiner persönlichen Webseite [vlntn.de](https://vlntn.de) gelistet, oder zumindest sind dort mögliche Kontaktdaten einsehbar.
 
 ## 1.2 Projektbeschreibung
 
