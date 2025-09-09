@@ -62,6 +62,8 @@ Für die Weboberfläche wird Vuejs verwendet, ein clientseitiges JavaScript-Webf
 
 Als Zwischenglied und Backend zwischen diesen beiden Services wird Django, ein high-level Python web framework, eingesetzt. Django kann auch zur Darstellung vom Webseiten genutzt werden, wird im Rahmen dieses Projektes aber als reine Schnittstelle zwischen dem Frontend und Orthanc verwendet, sowie zur Benutzerverwaltung.
 
+![Übersicht über die Architektur](./images/ptv_architecture.svg)
+
 ## 3.2 Orthanc
 
 TODO: Was ist Orthanc allgemein? Wie wird es in diesem Projekt verwendet? Welche Abfrage werden in diesem Projekt an Orthanc gesendet?
