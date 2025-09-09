@@ -158,25 +158,25 @@ def instance_preview(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-@require_POST
-@login_required
-def instance_file(request, instance_id):
-    print("instance file request ###############################################")
-    try:
-        orthanc_response = requests.get(
-            f"{ORTHANC_URL}/instances/{instance_id}/file",
-            auth=ORTHANC_AUTH,
-            stream=True
-        )
+# @require_POST
+# @login_required
+# def instance_file(request, instance_id):
+#     print("instance file request ###############################################")
+#     try:
+#         orthanc_response = requests.get(
+#             f"{ORTHANC_URL}/instances/{instance_id}/file",
+#             auth=ORTHANC_AUTH,
+#             stream=True
+#         )
 
-        if orthanc_response.status_code != 200:
-            return JsonResponse({'error': 'Fehler bei der Verbindung zu ORthanc'}, status=orthanc_response.status_code)
+#         if orthanc_response.status_code != 200:
+#             return JsonResponse({'error': 'Fehler bei der Verbindung zu ORthanc'}, status=orthanc_response.status_code)
         
-        response['Content-Disposition'] = f'inline; filename="{instance_id}.dcm"'
-        return response 
+#         response['Content-Disposition'] = f'inline; filename="{instance_id}.dcm"'
+#         return response 
 
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+#     except Exception as e:
+#         return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_POST
