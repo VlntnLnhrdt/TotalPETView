@@ -128,7 +128,7 @@ Die gesamte Anwendung ist containerisiert und wird über Docker verwaltet. Daher
 
 >[!TIP]
 >
->**Empfehlung:** Installation von [Docker Desktop](https://www.docker.com/products/docker-desktop/). Es ist für Windows, macOS und Linux verfügbar und enthält neben dem Docker-Daemon auch Docker Compose sowie eine grafische Benutzeroberfläche zur Verwaltung der Container.
+>Installation von [Docker Desktop](https://www.docker.com/products/docker-desktop/). Es ist für Windows, macOS und Linux verfügbar und enthält neben dem Docker-Daemon auch Docker Compose sowie eine grafische Benutzeroberfläche zur Verwaltung der Container.
 
 ## 4.2 Inbetriebnahme
 
@@ -186,19 +186,72 @@ Auf meiner privaten Webseite [vlntn.de/tpvexamples/](https://vlntn.de/tpvexample
 
 Dieses Kapitel beschreibt den typischen angedachten Arbeitsablauf und die Funktionalität der einzelnen Ansichten der TotelPetView-Anwendung.
 
-# 5.1 Anmeldung (Login)
+## 5.1 Anmeldung (Login)
 
 Nach dem ersten Aufruf der Webseite wird der Benutzer zur Anmeldeseite weitergeleitet. Der Zugriff auf die Kernfunktionen der Anwendung ist nur nach erfolgreicher Authentifizierung möglich.
 
-* **Ablauf:**
-  1. Eingabe der registrierten E-Mail-Adresse und das dazugehörige Passwort
-  2. Klick auf "Login"
-  3. Bei erfolgreicher Anmeldung wird der Bentuzer zur Suchseite weitergeleitet. Bei fehlerhaften Daten erscheint eine Fehlermeldung.
+**Ablauf:**
+1. Eingabe der registrierten E-Mail-Adresse und das dazugehörige Passwort
+2. Klick auf "Login"
+3. Bei erfolgreicher Anmeldung wird der Bentuzer zur Suchseite weitergeleitet. Bei fehlerhaften Daten erscheint eine Fehlermeldung
 
 FIXME: Hier ein Screenshot der Anmeldeseite und prüfen ob mail oder username als Login. und ggf. mein account raus nehmen
 
 >[!NOTE]
+>
 >Es ist immer der Standardbenutzer *admin* mit Password *Pa$$w0rd* hinterlegt.
+
+## 5.2 DICOM-Upload
+
+Über die Upload-Seite können neue medizinische Bilddaten in das PACS geladen werden. Die Anwendung ist darauf ausgelegt, ganz Ordner mit DICOM-Dateien (`.dcm`) zu verarbeiten. Orthanc ist auch darauf ausgelegt, dass breits im KIS existierende System direkt ihre Bilddaten hochladen können, jedoch ist diese Upload Funktion besonders im Rahmen der Entwickung und des Testens sehr hilfreich.
+
+**Ablauf:**
+1. Klick auf die den Upload-Pfeil rechts oben in den Kopfleiste
+2. Klick auf "Ordner auswählen"
+3. Auswahl des gewünschten Ordners mit den Dateien
+4. Die Anwendung listet alle gefundenen `.dcm`-Dateien auf
+5. Klick auf "Hochladen starten", um den Upload-Prozess zu beginnen
+6. Eine Statusanzeige informiert über den Fortschritt und das Ergebnis des Uploads
+
+TODO: Screenshot der Weboberfläche anzeigen
+
+## 5.3 Patientensuche
+
+Die Suchseite ist die zentrale Anlaufstelle, um im PACS nach Patienten und deren Studien zu suchen.
+
+**Ablauf:**
+1. Eingabe des Suchbegriffes (zB. Vorname, Nachname, Patienten-ID) in die Suchleiste. Bei jeder Änderung der Eingabe, werden die Suchergebnisse automatisch angepasst
+2. Die Ergebnisliste zeigt alle passenden Patienten an
+3. *Ein Klick* auf einen Patienten lädt dessen zugehörigen Studien und zeigt sie direkt unter dem Patienteneintrag an
+4. *Ein Klick* auf eine Studie lädt die dazugehörigen Bildserien und zeigt sie inklusive kleiner Vorschaubilder unterhalb der Patientenergebnisse an
+5. *Ein Doppelklick* auf einen Patienten / ein Studie, öffnet den Viewer für den entsprechenden Patienten
+
+  TODO: Screenshot mit Beispieldaten zeigen
+
+  ## 5.4 Viewer
+
+  Der Viewer ist für die detaillierte Betrachtung der Bilddaten vorgesehen. Hier können Bildserien per Drag & Drop in verschiedenen Ansichtsfenstern (Viewports) angeordnet werden.
+
+**Layout & Funktionalität:**
+  * **Linke Spalte:** Zeigt die Patientendetails sowie eine Liste aller Studien und der darin enthaltenen Serien. Die Serien können von hier aus per Drag & Drop in einen Viewport verschoben werden (Nicht umgesetzt)
+  * **Toolbar (oben):** Bietet Werkzeuge zur Anpassung des Layout. Der Benutzer kann zwischen verschiedenen Rastern (1x2, 2x2) wählen, um mehrere Bildserien gleichzeitig zu betrachten. Zudem kann der aktuelle Patient noch einmal in einem neuen Fenster geöffnet werden, um einen möglichen zweiten Bildschirm auch nutzen zu können. Hier sollen in Zukunft weitere Tools hinzugefügt werden
+  * **Viewport-Grid (Hauptbereich):** Dies ist der Zielbereich für die Bildserien. Hier sollen die Bildserien hineinzugezogen werden, um sie anzuordnen und zu laden sowie in Zukunft zu bearbeiten.
+
+> [!NOTE]
+>
+> Die eigentliche Darstellung der DICOM-Bilder mittels Cornerstone.js ist in der aktuellen Version noch nicht implementiert. Die Funktionalität beschränkt isch auf das Laden der Metadaten und die Anordnung im Layout.
+
+TODO: Screenshot hinzufügen
+
+## 5.5 Benutzerverwaltung
+
+Diese Seite ist nur für Administratoren sichtbar und bietet Funktionen zur Verwaltung der Benutzerkonten.
+
+**Funktionen:**
+* **Benutzerliste:** Zeigt eine tabellarische Übersicht aller im System registrierten Benutzer, inklusive deren Benutzernamen, E-Mail-Adresse und Registrierungsdatum.
+* **Neuen Benutzer anlegen:** Auf der rechten Seite befindet sich ein Formular, mit dem ein Administrator neue Benutzerkonten anlegen kann.
+
+TODO: Screenshot hinzufügen
 
 <div style="page-break-after: always;"></div>
 
