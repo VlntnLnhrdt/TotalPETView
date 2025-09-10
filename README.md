@@ -126,6 +126,8 @@ In diesem Kapitel wird beschrieben, wie die TotalPETView-Anwendung auf einem lok
 
 Die gesamte Anwendung ist containerisiert und wird über Docker verwaltet. Daher ist eine funktionierende Installation von Docker und Docker Compose zwingend erforderlich.
 
+>[!TIP]
+>
 >**Empfehlung:** Installation von [Docker Desktop](https://www.docker.com/products/docker-desktop/). Es ist für Windows, macOS und Linux verfügbar und enthält neben dem Docker-Daemon auch Docker Compose sowie eine grafische Benutzeroberfläche zur Verwaltung der Container.
 
 ## 4.2 Inbetriebnahme
@@ -196,8 +198,7 @@ Nach dem ersten Aufruf der Webseite wird der Benutzer zur Anmeldeseite weitergel
 FIXME: Hier ein Screenshot der Anmeldeseite und prüfen ob mail oder username als Login. und ggf. mein account raus nehmen
 
 >[!NOTE]
->
->**Hinweis:** Es ist immer der Standardbenutzer *admin* mit Password *Pa$$w0rd* hinterlegt.
+>Es ist immer der Standardbenutzer *admin* mit Password *Pa$$w0rd* hinterlegt.
 
 <div style="page-break-after: always;"></div>
 
