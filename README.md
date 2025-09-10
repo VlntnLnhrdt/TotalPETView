@@ -156,6 +156,8 @@ docker compose up
 
 Docker wird nun die notwendigen Images herunterladen, die Container erzeugen und starten. Um die Container im "detached" Modus laufen zu lassen und damit das Terminal wieder frei zu halten, kann der Parameter `-d` hinzugefügt werden.
 
+<div style="page-break-after: always;"></div>
+
 ## 4.3 Erreichbarkeit der Dienste
 
 Nachdem die Container erfolgreich gestartet wurden, sind die einzelnen Komponenten des TPVs unter den folgenden Adressen im Webbrowser erreichbar:
@@ -180,7 +182,22 @@ Auf meiner privaten Webseite [vlntn.de/tpvexamples/](https://vlntn.de/tpvexample
 
 # 5. Benutzung
 
-TODO: Hier kurz einen typischen Usecase-Verlauf erläutern (Anmelden, Daten hochladen, Patienten Suchen, Viewer öffnen)
+Dieses Kapitel beschreibt den typischen angedachten Arbeitsablauf und die Funktionalität der einzelnen Ansichten der TotelPetView-Anwendung.
+
+# 5.1 Anmeldung (Login)
+
+Nach dem ersten Aufruf der Webseite wird der Benutzer zur Anmeldeseite weitergeleitet. Der Zugriff auf die Kernfunktionen der Anwendung ist nur nach erfolgreicher Authentifizierung möglich.
+
+* **Ablauf:**
+  1. Eingabe der registrierten E-Mail-Adresse und das dazugehörige Passwort
+  2. Klick auf "Login"
+  3. Bei erfolgreicher Anmeldung wird der Bentuzer zur Suchseite weitergeleitet. Bei fehlerhaften Daten erscheint eine Fehlermeldung.
+
+FIXME: Hier ein Screenshot der Anmeldeseite und prüfen ob mail oder username als Login. und ggf. mein account raus nehmen
+
+>[!NOTE]
+>
+>**Hinweis:** Es ist immer der Standardbenutzer *admin* mit Password *Pa$$w0rd* hinterlegt.
 
 <div style="page-break-after: always;"></div>
 
