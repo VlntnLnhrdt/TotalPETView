@@ -133,4 +133,4 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173","http://localhost:8080","http://localhost:80","http://localhost"]  # frontend
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173","http://localhost:8080","http://localhost:80","http://localhost"]  # frontend
 
-DATA_UPLOAD_MAX_NUMBER_FILES = 400 # to allow up to 400 dicoms files at once
+DATA_UPLOAD_MAX_NUMBER_FILES = 1000 # to allow up to 1000 dicom files at once (and files in general)
