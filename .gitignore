@@ -12,3 +12,6 @@ backend/db.sqlite3
 orthanc/orthanc-db
 orthanc/example
 !orthanc/example/README.md
+
+# Allgemeines
+*.pdf
