@@ -239,7 +239,7 @@ Die Suchseite ist die zentrale Anlaufstelle, um im PACS nach Patienten und deren
 
 > [!NOTE]
 >
-> Die eigentliche Darstellung der DICOM-Bilder mittels Cornerstone.js ist in der aktuellen Version noch nicht implementiert. Die Funktionalität beschränkt isch auf das Laden der Metadaten und die Anordnung im Layout.
+> Die eigentliche Darstellung der DICOM-Bilder mittels Cornerstone.js ist in der aktuellen Version noch nicht implementiert. Die Funktionalität beschränkt sich auf das Laden der Metadaten und die Anordnung im Layout.
 
 TODO: Screenshot hinzufügen
 
@@ -259,10 +259,48 @@ TODO: Screenshot hinzufügen
 
 ## 6.1 Sicherheit
 
-Standardpasswort alice, mit environment variables arbeiten, exessiv pentesten. aktuell nur http und kein https. Zudem wäre es sinnvoll die Logins mit denen des KIS zu verknüpfen, dies kann Django auch.
+Die aktuelle Konfiguration des TotalPETViewers ist bislang auf eine Entwicklungs und Testumgebung ausgelegt. Für den Einsatz in einer produktiven klinischen Umgebung müssen zwingend weitere Sicherheitsmaßnahmen ergriffen werden:
+
+**HTTPS-Verschlüsselung:** Die gesamte Kommunikation zwischen dem Client (Browser) und dem Server muss über HTTPS verschlüsselt werden. Dies wird typischerweise durch einen Reverse-Proxy (z.B. Nginx) realisiert, der SSL / TLS-Zertifikate verwaltet.
+
+**Django-Konfiguration für die Produktivsetzung:**
+* Der `DEBUG`-Modus muss in der `settings.py` auf `False` gesetzt werden, um die Preisgabe von sensiblen Konfigurationsdetails bei Fehlern zu verhinden.
+* Der `SECRET_KEY` muss aus einer sicheren Quelle (z.B. Umgebungsvariable oder Secret-Management-System) geladen und darf nicht fest im Code hinterlegt werden.
+* Die `CORS_ALLOWED_ORIGINS`-List muss auf die spezifische Domain des Frontends beschränkt werden, anstatt wie bisher zur Vereinfachung der Entwicklung pauschal `localhost` zu erlauben.
+* Die Anwendung sollte über einen robuste WSGI-Server wie Gunicorn betrieben werden, nicht mit dem bisheringen Django-Entwicklungsserver.
+
+**Härtung von Orthanc:** Die Standard-Zugangsdaten (`alice`, `alicePassword`) müssen geändert werden und ähnlich die der zuvor erwähnt Django `SECRET_KEY` behandelt werden. Zudem sollten der Zugriff auf die Web-Oberfläche und die API auf vertrauenswürdige Netzwerkadressen beschränkt werden.
+
+**Datenbank:** Die bisher verwendete SQLite-Datenbank eignet sich besonders für die Entwicklung, für den Produktivbetrieb ung bei steigenden Performanzanforderungen sollte jedoch auf ein leistungsfähigeres und robusteres Datenbanksystem wie PostgreSQL migriert werden.
+
+<div style="page-break-after: always;"></div>
 
 ## 6.2 Integration in ein KIS
 
+Das System befindet sich vollständig in einer Entwicklungsumgebung und ist bislang als eigenständig Anwendung konfiguriert. Eine Integration in ein bestehendes Krankenhausinformationssystem (KIS) erfordert mehrere Schritte:
+
+**Produktivsetzung der Komponenten:** Zuerst müssen alle unter 6.1 genannten Sicherheitsaspekte umgesetzt werden.
+* **Vue.js:** Das Frontend muss für die Produktion gebaut werden (`npm run build`). Die resultierenden statischen Dateien sollten von einem Webserver (z.B. Nginx) ausgeliefert werden, nicht vom Vite-Entwicklungsserver.
+* **Django & Orthanc:** Wie unter 6.1 beschrieben, müssen Django und Orthanc für den Produktivbetrieb konfiguriert und gehärtet werden.
+
+**DICOM-Kommunikation:** Die standardisierte DICOM-Schnittstelle von Orthanc ist der primäre Anknüpfungspunkt an ein KIS. Orthanc kann so konfiguriert werden, dass es DICOM-Daten von anderen Modalitäten oder PACS im KIS empfängt oder dorthin sendet.
+
+**Weitere KIS Integrationen:** Um eine höhere Integration und weitere Funktionen zu ermöglichen, könnte eine HL7-Schnittstelle im Django-Backend implementiert werden, um tiefer mit dem KIS zu kommunizieren (z.B. Untersuchungsaufträge). Zudem wäre es auch möglich eine Schnittstelle zu schaffen, welche es ermöglich vom KIS aus direkt auf Orthanc zuzugreifen.
+
 ## 6.3 Stabilität und Testing
 
+Bislang wurden für das Projekt keine automatisierten Tests (Unit-Tests, Integrationstests) implementiert.
+
+Die Stabilität der Anwendung wurde durch manuelle Tests während der Entwicklung sichergestellt. Der Kern-Workflow - von der Benutzeranmeldung über den Daten-Upload und die Suche bis hin zum Laden der Metadaten im Viewer - funktioniert in der aktuellen Version stabil und weitgehend fehlerfrei.
+
+Für eine Weiterentwicklung und zur Gewährleistung der langfristigen Wartbarkeit ist die Implementierung einer umfassenden Teststrategie jedoch ein unerlässlicher nächster Schritt, besonders wenn fortlaufend Updates veröffentlich werden sollen.
+
+<div style="page-break-after: always;"></div>
+
 ## 6.4 Meine Meinung zum Projekt
+
+Dieses Projekt war eine unglaublich lehrreiche REise durch die Welt der modernen Webentwicklung im medizinischen Kontext. Die Konzeption einer Drei-Schichten-Architektur mit voneinander getrennten, containerisierten Diensten war eine spannende Herausforderung. Besonders die Einarbeitung in Django als reines API-Backend und die reaktive Natur von Vue.js haben mir tiefe Einblicke in die Webentwicklung ermöglicht.
+
+Die größte Hürde war zweifellos die Komplexität der DICOM-Welt im Zusammenhang mit der clientseitigen Darstellung mit Cornerstone.js. Die Schwierigkeiten bei der Implementierung des Viewers haben viel Zeit gekostet, was letztendlich dazu führte, dass dieses Kernfeature unvollendet blieb. Dennoch bin ich stolz auf die solide Basis, die geschaffen wurde: Die gesamte Backend-Logik zur Kommunikation mit dem PACS sowie die komplette Benutzeroberfläche sind fertiggestellt und funktional.
+
+Ich sehe das Projekt als ein starkes Fundament. Ein möglicher Nachfolger kann sich voll und ganz auf die verbleibende Herausforderung - die reine Bilddarstellung im Viewer - konzentrieren, ohne sich um die Architektur, Datenverwaltung oder Benutzerverwaltung kümmern zu müssen. Der TotalPETViewer ist somit ein Prototyp, der das Potenzial eines webbasierten DICOM-Systems eindrucksvoll demonstriert.
