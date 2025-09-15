@@ -1,3 +1,53 @@
+# TotalPETView
+
+Ein webbasierter DICOM-Viewer für PET/CT-Scans, entwickelt im Rahmen des Moduls *Klinisches Anwendungsprojekt* an der TUM.  
+Ermöglicht Upload, Verwaltung und Visualisierung von medizinischen Bilddaten (DICOM) über eine moderne Weboberfläche.
+
+---
+
+![Version](https://img.shields.io/badge/version-0.3.0-blue)
+![Status](https://img.shields.io/badge/status-prototype-orange)
+![Made with Vue.js](https://img.shields.io/badge/frontend-Vue.js-42b883?logo=vue.js&logoColor=white)
+![Backend Django](https://img.shields.io/badge/backend-Django-092e20?logo=django&logoColor=white)
+![PACS Orthanc](https://img.shields.io/badge/PACS-Orthanc-lightgrey)
+
+---
+
+## Inhaltsverzeichnis
+
+- [1. Projektdokumentation des TotalPETViewers](#1-projektdokumentation-des-totalpetviewers)
+  - [1.1 Projektinformationen](#11-projektinformationen)
+  - [1.2 Projektbeschreibung](#12-projektbeschreibung)
+  - [1.3 Projektziel](#13-projektziel)
+- [2. Anforderungen](#2-anforderungen)
+  - [2.1 Funktionale Anforderungen](#21-funktionale-anforderungen)
+  - [2.2 Nicht-funktionale Anforderungen](#22-nicht-funktionale-anforderungen)
+  - [2.3 Technische Anforderungen](#23-technische-anforderungen)
+  - [2.3 Gründe für unerfüllte Anforderungen](#23-gründe-für-unerfüllte-anforderungen)
+- [3. Architektur](#3-architektur)
+  - [3.1 Übersicht](#31-übersicht)
+  - [3.2 Orthanc](#32-orthanc)
+  - [3.3 Vuejs](#33-vuejs)
+  - [3.4 Django](#34-django)
+- [4. Installation](#4-installation)
+  - [4.1 Voraussetzungen](#41-voraussetzungen)
+  - [4.2 Inbetriebnahme](#42-inbetriebnahme)
+  - [4.3 Erreichbarkeit der Dienste](#43-erreichbarkeit-der-dienste)
+  - [4.4 Beispieldaten](#44-beispieldaten)
+- [5. Benutzung](#5-benutzung)
+  - [5.1 Anmeldung (Login)](#51-anmeldung-login)
+  - [5.2 DICOM-Upload](#52-dicom-upload)
+  - [5.3 Patientensuche](#53-patientensuche)
+  - [5.4 Viewer](#54-viewer)
+  - [5.5 Benutzerverwaltung](#55-benutzerverwaltung)
+- [6. Abschließende Worte](#6-abschließende-worte)
+  - [6.1 Sicherheit](#61-sicherheit)
+  - [6.2 Integration in ein KIS](#62-integration-in-ein-kis)
+  - [6.3 Stabilität und Testing](#63-stabilität-und-testing)
+  - [6.4 Meine Meinung zum Projekt](#64-meine-meinung-zum-projekt)
+
+---
+
 # 1. Projektdokumentation des TotalPETViewers
 
 ## 1.1 Projektinformationen
