@@ -245,8 +245,6 @@ Nach dem ersten Aufruf der Webseite wird der Benutzer zur Anmeldeseite weitergel
 2. Klick auf "Login"
 3. Bei erfolgreicher Anmeldung wird der Bentuzer zur Suchseite weitergeleitet. Bei fehlerhaften Daten erscheint eine Fehlermeldung
 
-FIXME: Hier ein Screenshot der Anmeldeseite und prüfen ob mail oder username als Login. und ggf. mein account raus nehmen
-
 >[!NOTE]
 >
 >Es ist immer der Standardbenutzer *admin* mit Password *Pa$$w0rd* hinterlegt.
@@ -263,8 +261,6 @@ FIXME: Hier ein Screenshot der Anmeldeseite und prüfen ob mail oder username al
 5. Klick auf "Hochladen starten", um den Upload-Prozess zu beginnen
 6. Eine Statusanzeige informiert über den Fortschritt und das Ergebnis des Uploads
 
-TODO: Screenshot der Weboberfläche anzeigen
-
 ## 5.3 Patientensuche
 
 Die Suchseite ist die zentrale Anlaufstelle, um im PACS nach Patienten und deren Studien zu suchen.
@@ -276,11 +272,9 @@ Die Suchseite ist die zentrale Anlaufstelle, um im PACS nach Patienten und deren
 4. *Ein Klick* auf eine Studie lädt die dazugehörigen Bildserien und zeigt sie inklusive kleiner Vorschaubilder unterhalb der Patientenergebnisse an
 5. *Ein Doppelklick* auf einen Patienten / ein Studie, öffnet den Viewer für den entsprechenden Patienten
 
-  TODO: Screenshot mit Beispieldaten zeigen
+## 5.4 Viewer
 
-  ## 5.4 Viewer
-
-  Der Viewer ist für die detaillierte Betrachtung der Bilddaten vorgesehen. Hier können Bildserien per Drag & Drop in verschiedenen Ansichtsfenstern (Viewports) angeordnet werden.
+Der Viewer ist für die detaillierte Betrachtung der Bilddaten vorgesehen. Hier können Bildserien per Drag & Drop in verschiedenen Ansichtsfenstern (Viewports) angeordnet werden.
 
 **Layout & Funktionalität:**
   * **Linke Spalte:** Zeigt die Patientendetails sowie eine Liste aller Studien und der darin enthaltenen Serien. Die Serien können von hier aus per Drag & Drop in einen Viewport verschoben werden (Nicht umgesetzt)
@@ -291,8 +285,6 @@ Die Suchseite ist die zentrale Anlaufstelle, um im PACS nach Patienten und deren
 >
 > Die eigentliche Darstellung der DICOM-Bilder mittels Cornerstone.js ist in der aktuellen Version noch nicht implementiert. Die Funktionalität beschränkt sich auf das Laden der Metadaten und die Anordnung im Layout.
 
-TODO: Screenshot hinzufügen
-
 ## 5.5 Benutzerverwaltung
 
 Diese Seite ist nur für Administratoren sichtbar und bietet Funktionen zur Verwaltung der Benutzerkonten.
@@ -300,8 +292,6 @@ Diese Seite ist nur für Administratoren sichtbar und bietet Funktionen zur Verw
 **Funktionen:**
 * **Benutzerliste:** Zeigt eine tabellarische Übersicht aller im System registrierten Benutzer, inklusive deren Benutzernamen, E-Mail-Adresse und Registrierungsdatum.
 * **Neuen Benutzer anlegen:** Auf der rechten Seite befindet sich ein Formular, mit dem ein Administrator neue Benutzerkonten anlegen kann.
-
-TODO: Screenshot hinzufügen
 
 <div style="page-break-after: always;"></div>
 
