@@ -11,15 +11,13 @@
                 <div class="user-list">
                     <div class="headrow">
                         <p>Benutzername</p>
-                        <p>Email</p>
                         <p>Registriert am</p>
                     </div>
                     <div v-if="users.length === 0">
                         <p class="no-results-text">Keine Benutzer gefunden.</p>
                     </div>
-                    <div v-for="user in users" :key="user.email" class="user-row">
+                    <div v-for="user in users" :key="user.username" class="user-row">
                         <p>{{ user.username }}</p>
-                        <p>{{ user.email }}</p>
                         <p>{{ formatDate(user.date_joined) }}</p>
                     </div>
                 </div>
@@ -29,7 +27,6 @@
                 <h2>Neuen Benutzer anlegen</h2>
                 <form @submit.prevent="addUser" class="add-user-form">
                     <input type="text" v-model="newUser.username" placeholder="Benutzername" required>
-                    <input type="email" v-model="newUser.email" placeholder="Email" required>
                     <input type="password" v-model="newUser.password" placeholder="Passwort" required>
                     <input type="password" v-model="newUser.password2" placeholder="Passwort bestätigen" required>
                     <button type="submit">Benutzer anlegen</button>
@@ -57,7 +54,6 @@
                 users: [],
                 newUser: {
                     username: '',
-                    email: '',
                     password: '',
                     password2: ''
                 }
@@ -88,7 +84,7 @@
                 try {
                     await registerUser(this.newUser);
                     setLoadingStatus(this, false, "Benutzer erfolgreich angelegt", true);
-                    this.newUser = { username: '', email: '', password: '', password2: '' };
+                    this.newUser = { username: '', password: '', password2: '' };
                     await this.loadUsers();
                 } catch (error) {
                     console.error("Fehler beim Anlegen des Benutzers:", error);
@@ -135,7 +131,7 @@ h2 {
 
 .user-list .headrow, .user-list .user-row {
     display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
+    grid-template-columns: 1fr 1fr;
     padding: 10px;
     border-bottom: 1px solid #eee;
     align-items: center;

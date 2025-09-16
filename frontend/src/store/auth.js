@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
       })
     },
 
-    async login(email, password, router = null) {
+    async login(username, password, router = null) {
       const response = await fetch(authURL+'/login', {
         method: 'POST',
         headers: {
@@ -33,7 +33,7 @@ export const useAuthStore = defineStore('auth', {
           'X-CSRFToken': getCSRFToken(),
         },
         body: JSON.stringify({
-          email,
+          username,
           password,
         }),
         credentials: 'include',

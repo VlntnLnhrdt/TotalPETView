@@ -20,14 +20,14 @@ def set_csrf_token(request):
 def login_view(request):
     try:
         data = json.loads(request.body.decode('utf-8'))
-        email = data['email']
+        username = data['username']
         password = data['password']
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, KeyError):
         return JsonResponse(
-            {'success': False, 'message': 'Invalid JSON'}, status=400
+            {'success': False, 'message': 'Invalid JSON or missing fields'}, status=400
         )
 
-    user = authenticate(request, username=email, password=password)
+    user = authenticate(request, username=username, password=password)
 
     if user:
         login(request, user)
@@ -70,5 +70,5 @@ def get_all_users(request):
         return JsonResponse({'error': 'Forbidden'}, status=403)
     
     User = get_user_model()
-    users = User.objects.all().values('username', 'email', 'date_joined')
+    users = User.objects.all().values('username', 'date_joined')
     return JsonResponse(list(users), safe=False)
