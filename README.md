@@ -247,7 +247,7 @@ Nach dem ersten Aufruf der Webseite wird der Benutzer zur Anmeldeseite weitergel
 
 >[!NOTE]
 >
->Es ist immer der Standardbenutzer *admin* mit Password *Pa$$w0rd* hinterlegt.
+>Es ist immer der Superuser *admin*, als auch das Defaultuser *user*, jeweils mit Password *Pa$$w0rd*, hinterlegt. Nur *admin* kann auf die [Benutzerverwaltung](#55-benutzerverwaltung) zugreifen und Änderungen vornehmen.
 
 ## 5.2 DICOM-Upload
 
@@ -287,7 +287,7 @@ Der Viewer ist für die detaillierte Betrachtung der Bilddaten vorgesehen. Hier 
 
 ## 5.5 Benutzerverwaltung
 
-Diese Seite ist nur für Administratoren sichtbar und bietet Funktionen zur Verwaltung der Benutzerkonten.
+Diese Seite ist nur für Superuse sichtbar und bietet Funktionen zur Verwaltung der Benutzerkonten.
 
 **Funktionen:**
 * **Benutzerliste:** Zeigt eine tabellarische Übersicht aller im System registrierten Benutzer, inklusive deren Benutzernamen, E-Mail-Adresse und Registrierungsdatum.
