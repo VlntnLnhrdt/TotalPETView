@@ -180,7 +180,7 @@ Die gesamte Anwendung ist containerisiert und wird über Docker verwaltet. Daher
 >
 >Installation von [Docker Desktop](https://www.docker.com/products/docker-desktop/). Es ist für Windows, macOS und Linux verfügbar und enthält neben dem Docker-Daemon auch Docker Compose sowie eine grafische Benutzeroberfläche zur Verwaltung der Container.
 
-## 4.2 Inbetriebnahme
+## 4.2 Inbetriebnahme (Entwicklung)
 
 Die Inbetriebnahme erfolg in zwei einfachen Schritten: Das Klonen des Repositories und das Starten der Container.
 
@@ -208,18 +208,33 @@ docker compose up
 
 Docker wird nun die notwendigen Images herunterladen, die Container erzeugen und starten. Um die Container im "detached" Modus laufen zu lassen und damit das Terminal wieder frei zu halten, kann der Parameter `-d` hinzugefügt werden.
 
+## 4.3 Inbetriebnahme (Produktion)
+
+Für den Einsatz auf einem öffentlichen Server wurde eine separate Produktionskonfiguration erstellt. Diese nutzt einen optimierten Nginx-Webserver für das Frontend und startet das Backend mit einem robusten Gunicorn-Server.
+
+**1. Konfigurationsdatei erstellen**
+
+Im Hauptverzeichnis des Projekts befindet sich eine Datei namens `.env.example`. Kopiere diese Datei und benenne sie in `.env` um. Öffne die `.env`-Datei und passe die Werte für deine Serverumgebung an (insbesondere `DJANGO_SECRET_KEY` und die Domain-Namen in `DJANGO_ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS` und `CSRF_TRUSTED_ORIGINS`).
+
+**2. Anwendung im Produktionsmodus starten**
+
+Führe den folgenden Befehl aus, um die Anwendung mit der Produktionskonfiguration zu bauen und zu starten:
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
+```
+
+Die Anwendung ist danach unter Port 80 (HTTP) auf deinem Server erreichbar.
+
 <div style="page-break-after: always;"></div>
 
-## 4.3 Erreichbarkeit der Dienste
+## 4.4 Erreichbarkeit der Dienste
 
 Nachdem die Container erfolgreich gestartet wurden, sind die einzelnen Komponenten des TPVs unter den folgenden Adressen im Webbrowser erreichbar:
 
-* **Frontend (Webanwendung):** `http://localhost:5173`
-  * Dies ist die Hauptseite, über die Benutzer mit der Anwendung interagieren.
-
+* **Frontend (Entwicklung):** `http://localhost:80` (in `docker-compose.yml` auf Port 80 geändert)
+* **Frontend (Produktion):** `http://deine-server-ip-oder-domain`
 * **Backend API:** `http://localhost:8000`
-  * Die Schnittstelle, die von dem Frontend genutzt wird. Ein direkter Aufruf im Browser ist in der Regel nicht notwendig und auch nicht vorgesehen.
-
 * **Orthanc Web-UI (PACS):** `http://localhost:8042/ui/app/#/`
   * Eine administrative Weboberfläche für das Orthanc-PACS. Hier können DICOM-Daten direkt eingesehen und verwaltet werden.
   * **Login:** *alice*, **Passwort:** *alicePassword*

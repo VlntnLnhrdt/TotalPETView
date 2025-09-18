@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-const authURL = "http://localhost:8000/auth"
+const authURL = "/auth"
 
 export const useAuthStore = defineStore('auth', {
   state: () => {

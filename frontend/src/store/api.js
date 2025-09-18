@@ -1,7 +1,7 @@
 import { getCSRFToken } from "./auth"
 
-const apiURL = "http://localhost:8000/api"
-const authApiURL = "http://localhost:8000/auth"
+const apiURL = "/api"
+const authApiURL = "/auth"
 
 
 export async function getAllUsers() {
