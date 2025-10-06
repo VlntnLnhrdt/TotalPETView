@@ -158,6 +158,7 @@
                     setLoadingStatus(this, false, "Suche nach Patienten fehlgeschlagen", false)
                 }
             },
+            // Loads the study of the selected patient
             async selectPatient(orthancId) {
                 setLoadingStatus(this, true, "Lade Studien", true)
                 try {
@@ -172,6 +173,7 @@
 
                 this.activePatient = orthancId
             },
+            // Loads the series of the clicked study
             async selectStudy(study) {
                 setLoadingStatus(this, true, "Lade Series", true)
 
@@ -192,6 +194,7 @@
                 
             },
 
+            // Loads the preview urls which will the get loaded by the img-containers automatically
             async loadPreviewUrls() {
                 setLoadingStatus(this, true, "Lade Previews", true)
 
@@ -211,6 +214,7 @@
 
                 
             },
+            // Changes to the viewer
             loadViewer(orthancId) {
                 this.router.push({
                     path: '/viewer',
@@ -222,11 +226,6 @@
             formatDate(dateString) {
                 return formatDate(dateString)
             },
-            // setLoadingStatus(status, text, result=true) {
-            //     this.isLoading = status
-            //     this.loadingText = text
-            //     this.loadingResult = result
-            // }
         }
     }
 </script>

@@ -41,6 +41,7 @@ export default {
         }
     },
     methods: {
+        // Checks tge login, if correct, gets routed to Search.vue
         async login() {
             setLoadingStatus(this, true, "Prüfe Logindaten", true)
 

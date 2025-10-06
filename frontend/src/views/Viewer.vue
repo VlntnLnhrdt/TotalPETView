@@ -107,6 +107,7 @@
             this.loadPatientSeries()
         },
         methods: {
+            // Loads all the data related to the patient
             async loadPatientData() {
 
                 setLoadingStatus(this, true, "Lade Patientendaten", true)
@@ -126,6 +127,7 @@
                     setLoadingStatus(this, false, "Fehler beim Laden der Patientendaten", false)
                 }
             },
+            // Loads all the studies of the patient
             async loadPatientStudies() {
                 setLoadingStatus(this, true, "Lade Studien", true)
                 try {
@@ -139,6 +141,7 @@
                 }
 
             },
+            // Loads all series of the patient
             async loadPatientSeries() {
                 setLoadingStatus(this, true, "Lade Series", true)
 
@@ -169,6 +172,7 @@
                     setLoadingStatus(this, false, "Series konnten nicht geladen werden", false)
                 }
             },
+            // Loads the preview urls which will the get loaded by the img-containers automatically
             async loadPreviewUrls() {
                 setLoadingStatus(this, true, "Lade Previews", true)
 
@@ -198,6 +202,7 @@
                     setLoadingStatus(this, false, "Laden der Previews fehlgeschlagen", false)
                 }
             },
+            // Opens / closes a study
             toggleStudy(study) {
                 const index = this.openStudies.findIndex(s => s.ID === study.ID)
                 if (index !== -1) {

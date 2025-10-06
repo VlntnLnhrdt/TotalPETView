@@ -63,6 +63,7 @@
             this.loadUsers();
         },
         methods: {
+            // Retrieves all registered users
             async loadUsers() {
                 setLoadingStatus(this, true, "Lade Benutzer...", true)
                 try {
@@ -74,7 +75,7 @@
                     setLoadingStatus(this, false, "Fehler beim Laden der Benutzer", false)
                 }
             },
-
+            // Adds user to the django backend
             async addUser() {
                 if (this.newUser.password !== this.newUser.password2) {
                     setLoadingStatus(this, false, "Passwörter stimmen nicht überein", false);
