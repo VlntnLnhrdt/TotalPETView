@@ -8,6 +8,7 @@ import json
 ORTHANC_URL = 'http://orthanc:8042'  # Orthanc-URL
 ORTHANC_AUTH = ('alice', 'alicePassword')  # Falls Basic Auth benötigt wird # FIXME sollte in prod geändert werden
 
+# Retrieves the patient data from orthanc
 @login_required
 def get_patient_data(request, orthancId):
     try:
@@ -29,7 +30,7 @@ def get_patient_data(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
+# Retrieves the patient search results
 @require_POST
 @login_required
 def search_patients(request):
@@ -74,7 +75,7 @@ def search_patients(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
+# Retrieves the patient's studies from orthanc
 @login_required
 def patient_studies(request, orthancId):
     try:
@@ -99,6 +100,7 @@ def patient_studies(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+# Retrieves the study's series from orthanc
 @login_required
 def study_series(request, orthancId):
     try:
@@ -120,6 +122,7 @@ def study_series(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+# Retrieves the patient's series from orthanc
 @login_required
 def patient_series(request, orthancId):
     try:
@@ -141,6 +144,7 @@ def patient_series(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+# Retrieves the preview of a given instance
 @login_required
 def instance_preview(request, orthancId):
     try:
@@ -158,6 +162,7 @@ def instance_preview(request, orthancId):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+# Legacy code but is being kept as a possible starting point for future development
 # @require_POST
 # @login_required
 # def instance_file(request, instance_id):
@@ -179,6 +184,7 @@ def instance_preview(request, orthancId):
 #         return JsonResponse({'error': str(e)}, status=500)
 
 
+# uploads dicom files to orthanc
 @require_POST
 @login_required
 def upload_dicom_files(request):

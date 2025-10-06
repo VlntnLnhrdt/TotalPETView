@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from .forms import CreateUserForm
 
+# basic request which sets the CSRF cookie automatically
 @ensure_csrf_cookie
 @require_http_methods(['GET'])
 def set_csrf_token(request):
@@ -16,6 +17,7 @@ def set_csrf_token(request):
     """
     return JsonResponse({'message': 'CSRF cookie set'})
 
+# login request
 @require_http_methods(['POST'])
 def login_view(request):
     try:
@@ -36,10 +38,12 @@ def login_view(request):
         {'success': False, 'message': 'Invalid credentials'}, status=401
     )
 
+# logout request
 def logout_view(request):
     logout(request)
     return JsonResponse({'message': 'Logged out'})
 
+# returns userdata if authenticated
 @require_http_methods(['GET'])
 def user(request):
     if request.user.is_authenticated:
@@ -50,6 +54,7 @@ def user(request):
         {'message': 'Not logged in'}, status=401
     )
 
+# registers a user
 @require_http_methods(['POST'])
 def register(request):
     if not request.user.is_superuser:
@@ -64,6 +69,7 @@ def register(request):
         errors = form.errors.as_json()
         return JsonResponse({'error': errors}, status=400)
 
+# retrieves all users
 @require_http_methods(['GET'])
 def get_all_users(request):
     if not request.user.is_superuser:
