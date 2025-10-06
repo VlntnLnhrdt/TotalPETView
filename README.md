@@ -40,11 +40,15 @@ Ermöglicht Upload, Verwaltung und Visualisierung von medizinischen Bilddaten (D
   - [5.3 Patientensuche](#53-patientensuche)
   - [5.4 Viewer](#54-viewer)
   - [5.5 Benutzerverwaltung](#55-benutzerverwaltung)
-- [6. Abschließende Worte](#6-abschließende-worte)
-  - [6.1 Sicherheit](#61-sicherheit)
-  - [6.2 Integration in ein KIS](#62-integration-in-ein-kis)
-  - [6.3 Stabilität und Testing](#63-stabilität-und-testing)
-  - [6.4 Meine Meinung zum Projekt](#64-meine-meinung-zum-projekt)
+- [6. Technische Beschreibung und Konfiguration](#6-technische-beschreibung-und-konfiguration)
+  - [6.1 Architektur-Übersicht und Betriebsmodi](#61-architektur-übersicht-und-betriebsmodi)
+  - [6.2 Detaillierte Codebasis-Beschreibung](#62-detaillierte-codebasis-beschreibung)
+  - [6.3 Konfiguration für eine neue Umgebung](#63-konfiguration-für-eine-neue-umgebung)
+- [7. Abschließende Worte](#7-abschließende-worte)
+  - [7.1 Sicherheit](#71-sicherheit)
+  - [7.2 Integration in ein KIS](#72-integration-in-ein-kis)
+  - [7.3 Stabilität und Testing](#73-stabilität-und-testing)
+  - [7.4 Meine Meinung zum Projekt](#74-meine-meinung-zum-projekt)
 
 ---
 
@@ -310,9 +314,141 @@ Diese Seite ist nur für Superuse sichtbar und bietet Funktionen zur Verwaltung 
 
 <div style="page-break-after: always;"></div>
 
-# 6. Abschließende Worte
+# 6. Technische Beschreibung und Konfiguration
 
-## 6.1 Sicherheit
+In diesem Kapitel wird der technische Aufbau des TotalPETViewers detailliert beschrieben. Es richtet sich an zukünftige Entwickler und soll einen schnellen und umfassenden Einstieg in die Architektur und die Codebasis ermöglichen.
+
+## 6.1 Architektur-Übersicht und Betriebsmodi
+
+### Docker-Architektur
+
+Die gesamte Anwendung ist in drei separate Dienste unterteilt, die jeweils in einem eigenen Docker-Container laufen. Dies gewährleistet eine saubere Trennung der Verantwortlichkeiten und eine einfache Bereitstellung auf jedem System, auf dem Docker läuft. Die Dienste werden über `docker-compose` verwaltet.
+
+- **`frontend`**: Ein Container, der die Vue.js-Benutzeroberfläche ausliefert.
+- **`backend`**: Ein Container, der die Django-API und die Geschäftslogik enthält.
+- **`orthanc`**: Ein Container für den Orthanc DICOM-Server, der als Picture Archiving and Communication System (PACS) dient.
+
+### Entwicklungs- vs. Produktions-Setup
+
+Es existieren zwei Konfigurationsdateien für Docker Compose, um zwischen Entwicklung und Produktion zu unterscheiden:
+
+1.  **`docker-compose.yml` (Entwicklung):**
+    *   **Frontend:** Nutzt den Vite-Entwicklungsserver (`npm run dev`), der Hot-Reloading für schnelle Code-Änderungen ermöglicht. Der Quellcode wird per Volume direkt in den Container gemountet.
+    *   **Backend:** Startet den Django-Entwicklungsserver (`manage.py runserver`). Auch hier wird der Quellcode direkt gemountet, um Änderungen ohne Neustart des Containers zu übernehmen.
+
+2.  **`docker-compose.prod.yml` (Produktion):**
+    *   **Frontend:** Verwendet ein Multi-Stage-Build-Verfahren. Zuerst wird die Vue.js-Anwendung mit `npm run build` in statische HTML-, CSS- und JavaScript-Dateien kompiliert. Anschließend werden diese optimierten Dateien in einen schlanken **Nginx**-Container kopiert, der als performanter Webserver dient.
+    *   **Backend:** Startet die Django-Anwendung mit **Gunicorn**, einem robusten WSGI-Server, der für den Produktionseinsatz geeignet ist.
+    *   **Nginx als Reverse Proxy:** Der Nginx-Container im Frontend-Dienst ist so konfiguriert, dass er nicht nur die Frontend-Dateien ausliefert, sondern auch als **Reverse Proxy** für das Backend fungiert.
+
+### Kommunikation der Dienste
+
+Die Kommunikation zwischen den Containern findet innerhalb eines von Docker Compose erstellten, isolierten Netzwerks statt.
+
+-   **Browser ↔ Frontend (Nginx):** Der Benutzer greift über Port 80 auf den Nginx-Server zu.
+-   **Frontend (Nginx) ↔ Backend (Gunicorn):** API-Anfragen vom Frontend (z.B. an `/api/...` oder `/auth/...`) werden von Nginx an den Backend-Container an den Port `8000` weitergeleitet (`proxy_pass http://backend:8000/...`). Der Hostname `backend` wird dabei von Docker zum richtigen Container aufgelöst.
+-   **Backend (Django) ↔ Orthanc:** Das Django-Backend kommuniziert serverseitig mit dem Orthanc-Server, um DICOM-Daten zu verarbeiten. Es verwendet dazu die REST-API von Orthanc, die im Docker-Netzwerk unter dem Hostnamen `orthanc` auf Port `8042` erreichbar ist.
+
+Diese Architektur hat den entscheidenden Sicherheitsvorteil: Weder der Orthanc-Server noch der Django-Gunicorn-Server sind direkt aus dem Internet erreichbar. Nur der Nginx-Server ist öffentlich zugänglich und leitet Anfragen kontrolliert weiter.
+
+---
+
+## 6.2 Detaillierte Codebasis-Beschreibung
+
+### Backend (Django)
+
+Das Backend basiert auf dem Python-Framework Django und dient als REST-API-Schnittstelle zwischen dem Frontend und dem Orthanc-PACS. Es ist in mehrere Django-Apps unterteilt.
+
+#### **`backend/` (Projekt-Root)**
+
+- **`manage.py`**: Das zentrale Kommandozeilen-Tool von Django zur Ausführung administrativer Aufgaben (`runserver`, `migrate`).
+- **`requirements.txt`**: Listet alle Python-Abhängigkeiten des Projekts auf (z.B. `Django`, `requests`, `gunicorn`).
+- **`users.json`**: Eine "Fixture"-Datei, die Standard-Benutzerdaten (`admin`, `user`) enthält und beim ersten Start in die Datenbank geladen wird.
+
+#### **`backend/backend/` (Django-Projektkonfiguration)**
+
+- **`settings.py`**: Die zentrale Konfigurationsdatei. Definiert `INSTALLED_APPS`, `MIDDLEWARE`, `DATABASES` und wichtige Sicherheitseinstellungen wie `CORS_...` & `CSRF_...`, die aus der `.env`-Datei gelesen werden.
+- **`urls.py`**: Die Haupt-URL-Routing-Datei. Leitet Anfragen an `/auth/` zur `authenticator`-App und an `/api/` zur `api`-App weiter.
+- **`wsgi.py`**: Die Schnittstelle für den Gunicorn-Produktionsserver.
+
+#### **`backend/authenticator/` (App für Benutzerverwaltung)**
+
+- **`views.py`**: Enthält die Logik für die API-Endpunkte wie `login_view`, `logout_view`, `register` (nur für Superuser), `user` (gibt aktuelle Benutzerdaten zurück) und `get_all_users`.
+- **`urls.py`**: Definiert die spezifischen URL-Pfade für die Authentifizierung (`login`, `logout`, etc.).
+- **`forms.py`**: Enthält das `CreateUserForm`, das bei der Registrierung das Passwort sicher hasht.
+
+#### **`backend/api/` (App für die Orthanc-Kommunikation)**
+
+Fungiert als sicherer Proxy zum Orthanc-Server. Alle Endpunkte erfordern einen angemeldeten Benutzer.
+
+- **`views.py`**: 
+    - `search_patients`, `upload_dicom_files`, `get_patient_data`, etc.: Diese Funktionen nehmen Anfragen vom Frontend entgegen, stellen entsprechende Anfragen an die Orthanc-REST-API, verarbeiten die Antwort und senden sie als JSON zurück an das Frontend.
+    - `instance_preview`: Ruft ein Vorschaubild von Orthanc ab und leitet es als Bild-Antwort (`HttpResponse`) weiter.
+- **`urls.py`**: Mappt die API-Pfade (z.B. `patient/search`, `upload`) auf die Funktionen in `views.py`.
+
+### Frontend (Vue.js)
+
+Das Frontend ist eine Single-Page-Application (SPA), die mit Vue.js 3, Vite, Pinia und Vue Router erstellt wurde.
+
+#### **`frontend/` (Projekt-Root)**
+
+- **`index.html`**: Der HTML-Einstiegspunkt, der das `<div id="app"></div>` enthält.
+- **`package.json`**: Definiert alle JavaScript-Abhängigkeiten und die `scripts` (`dev`, `build`).
+- **`vite.config.js`**: Konfiguriert den Vite-Entwicklungsserver.
+- **`nginx.conf`**: Konfiguriert den Nginx-Produktionsserver, der die statischen Dateien ausliefert und als Reverse-Proxy für das Backend dient.
+
+#### **`frontend/src/` (Source-Code)**
+
+- **`main.js`**: Die Startdatei der Vue-Anwendung. Initialisiert Vue, Pinia und den Router und mountet die `App.vue`.
+- **`App.vue`**: Die Wurzelkomponente, die das globale `Layout.vue` und den `<router-view />` enthält.
+- **`router.js`**: Definiert alle clientseitigen Routen (Pfade und zugehörige Komponenten). Der `router.beforeEach`-Guard schützt authentifizierungspflichtige Routen und leitet bei Bedarf auf `/login` um.
+
+#### **`frontend/src/store/` (Pinia State Management)**
+
+- **`auth.js`**: Der `useAuthStore` verwaltet den Authentifizierungsstatus (`user`, `isAuthenticated`), der im `localStorage` persistiert wird. Die `actions` (`login`, `logout`) kommunizieren mit dem Backend.
+- **`api.js`**: Bündelt alle API-Aufrufe an die `/api`-Endpunkte des Backends. Kapselt die `fetch`-Logik.
+- **`utils.js`**: Enthält Hilfsfunktionen wie `formatDate` und `setLoadingStatus`.
+
+#### **`frontend/src/views/` (Seiten-Komponenten)**
+
+Jede `.vue`-Datei hier repräsentiert eine Seite.
+
+- **`Login.vue`**: Anmeldeseite.
+- **`Search.vue`**: Hauptseite zur Patientensuche und -anzeige.
+- **`Upload.vue`**: Seite für den DICOM-Datei-Upload.
+- **`Viewer.vue`**: Detailansicht für einen Patienten zur Bildbetrachtung.
+- **`UserManagement.vue`**: Seite zur Verwaltung von Benutzern (nur für Admins).
+
+#### **`frontend/src/components/` (Wiederverwendbare Komponenten)**
+
+- **`Layout.vue`**: Die Haupt-Layout-Komponente mit Header, Navigation und dem Inhaltsbereich (`<slot>`).
+
+---
+
+## 6.3 Konfiguration für eine neue Umgebung
+
+Um die Anwendung auf einem neuen Server oder lokal mit einer anderen IP-Adresse zu betreiben, müssen alle umgebungsspezifischen Variablen zentral in einer `.env`-Datei im Hauptverzeichnis des Projekts verwaltet werden.
+
+**Anleitung:**
+
+1.  **`.env`-Datei erstellen:** Kopieren Sie die Vorlagedatei `.env.example` und benennen Sie sie in `.env` um.
+2.  **IP-Adresse und Hostnamen anpassen:** Passen Sie die folgenden Werte in der `.env`-Datei an Ihre neue Umgebung an (z.B. mit Ihrer neuen IP-Adresse oder `localhost`):
+    -   `DJANGO_ALLOWED_HOSTS`: Hostnamen, die der Django-Server akzeptiert.
+    -   `CORS_ALLOWED_ORIGINS`: URLs, von denen das Frontend auf das Backend zugreifen darf.
+    -   `CSRF_TRUSTED_ORIGINS`: URLs, die für POST-Anfragen als vertrauenswürdig gelten.
+3.  **`nginx.conf` anpassen:** Bei Verwendung einer Domain sollte der `server_name` in `frontend/nginx.conf` angepasst werden.
+4.  **Neuen Secret Key generieren:** Für eine Produktionsumgebung muss der `DJANGO_SECRET_KEY` in der `.env`-Datei durch einen neuen, sicheren Schlüssel ersetzt werden.
+5.  **Anwendung neu starten:** Nach den Änderungen müssen die Docker-Container neu gebaut und gestartet werden:
+    ```bash
+    # Für Produktion
+    docker-compose -f docker-compose.prod.yml up -d --build
+    ```
+
+<div style="page-break-after: always;"></div>
+
+# 7. Abschließende Worte
+
+## 7.1 Sicherheit
 
 Die aktuelle Konfiguration des TotalPETViewers ist bislang auf eine Entwicklungs und Testumgebung ausgelegt. Für den Einsatz in einer produktiven klinischen Umgebung müssen zwingend weitere Sicherheitsmaßnahmen ergriffen werden:
 
@@ -330,7 +466,7 @@ Die aktuelle Konfiguration des TotalPETViewers ist bislang auf eine Entwicklungs
 
 <div style="page-break-after: always;"></div>
 
-## 6.2 Integration in ein KIS
+## 7.2 Integration in ein KIS
 
 Das System befindet sich vollständig in einer Entwicklungsumgebung und ist bislang als eigenständig Anwendung konfiguriert. Eine Integration in ein bestehendes Krankenhausinformationssystem (KIS) erfordert mehrere Schritte:
 
@@ -342,7 +478,7 @@ Das System befindet sich vollständig in einer Entwicklungsumgebung und ist bisl
 
 **Weitere KIS Integrationen:** Um eine höhere Integration und weitere Funktionen zu ermöglichen, könnte eine HL7-Schnittstelle im Django-Backend implementiert werden, um tiefer mit dem KIS zu kommunizieren (z.B. Untersuchungsaufträge). Zudem wäre es auch möglich eine Schnittstelle zu schaffen, welche es ermöglich vom KIS aus direkt auf Orthanc zuzugreifen.
 
-## 6.3 Stabilität und Testing
+## 7.3 Stabilität und Testing
 
 Bislang wurden für das Projekt keine automatisierten Tests (Unit-Tests, Integrationstests) implementiert.
 
@@ -352,7 +488,7 @@ Für eine Weiterentwicklung und zur Gewährleistung der langfristigen Wartbarkei
 
 <div style="page-break-after: always;"></div>
 
-## 6.4 Meine Meinung zum Projekt
+## 7.4 Meine Meinung zum Projekt
 
 Dieses Projekt war eine unglaublich lehrreiche REise durch die Welt der modernen Webentwicklung im medizinischen Kontext. Die Konzeption einer Drei-Schichten-Architektur mit voneinander getrennten, containerisierten Diensten war eine spannende Herausforderung. Besonders die Einarbeitung in Django als reines API-Backend und die reaktive Natur von Vue.js haben mir tiefe Einblicke in die Webentwicklung ermöglicht.
 
