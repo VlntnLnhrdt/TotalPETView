@@ -225,7 +225,7 @@ Im Hauptverzeichnis des Projekts befindet sich eine Datei namens `.env.example`.
 Führe den folgenden Befehl aus, um die Anwendung mit der Produktionskonfiguration zu bauen und zu starten:
 
 ```bash
-docker-compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 Die Anwendung ist danach unter Port 80 (HTTP) auf deinem Server erreichbar.
